@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libra Assist — Admin Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --border: #e2e5ea;
+    --text: #1a1d23;
+    --text-secondary: #5f6775;
+    --accent: #2c5ea8;
+    --accent-light: #e8eef7;
+    --accent-hover: #1e4a8a;
+    --success: #1a8a5c;
+    --success-bg: #e6f5ee;
+    --error: #c23a3a;
+    --error-bg: #fce8e8;
+    --warn: #b8860b;
+    --warn-bg: #fef6e0;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Sidebar ── */
+  nav {
+    width: 220px;
+    background: var(--text);
+    color: #fff;
+    padding: 24px 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 10;
+  }
+  nav .brand {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    margin-bottom: 12px;
+  }
+  nav .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: -.3px; }
+  nav .brand span { font-size: 11px; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .8px; }
+
+  nav a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px;
+    color: rgba(255,255,255,.65);
+    text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    transition: background .15s, color .15s;
+    cursor: pointer;
+  }
+  nav a:hover { background: rgba(255,255,255,.06); color: #fff; }
+  nav a.active { background: rgba(255,255,255,.1); color: #fff; }
+  nav a .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ── Main ── */
+  main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px 40px;
+    max-width: 960px;
+  }
+
+  section { display: none; }
+  section.active { display: block; }
+
+  h2 {
+    font-size: 20px; font-weight: 700; letter-spacing: -.3px;
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    color: var(--text-secondary); font-size: 13px; margin-bottom: 24px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 {
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .4px; color: var(--text-secondary); margin-bottom: 12px;
+  }
+
+  /* ── Form elements ── */
+  label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--text-secondary); margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: .3px;
+  }
+  textarea, input[type="text"], input[type="number"], select {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid var(--border); border-radius: 6px;
+    font-family: var(--sans); font-size: 14px;
+    background: var(--bg); color: var(--text);
+    transition: border-color .15s;
+    outline: none;
+  }
+  textarea:focus, input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+  textarea { resize: vertical; min-height: 100px; font-family: var(--mono); font-size: 13px; }
+
+  .form-row { margin-bottom: 14px; }
+  .form-inline { display: flex; gap: 12px; align-items: flex-end; }
+  .form-inline .form-row { flex: 1; margin-bottom: 0; }
+
+  button, .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 6px;
+    font-family: var(--sans); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+  }
+  button:hover { background: var(--accent-hover); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  button.danger { background: var(--error); }
+  button.danger:hover { background: #a82e2e; }
+  button.secondary {
+    background: transparent; color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  button.secondary:hover { background: var(--accent-light); }
+
+  /* ── Toggle switch ── */
+  .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+  .toggle {
+    position: relative; width: 42px; height: 24px;
+    background: var(--border); border-radius: 12px;
+    cursor: pointer; transition: background .2s;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle::after {
+    content: ''; position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: #fff; border-radius: 50%;
+    transition: transform .2s;
+  }
+  .toggle.on::after { transform: translateX(18px); }
+  .toggle-label { font-size: 13px; font-weight: 500; }
+
+  /* ── Output / results ── */
+  .result-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.7;
+  }
+  .result-box:empty { display: none; }
+
+  /* ── Status badges ── */
+  .badge {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 99px; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .3px;
+  }
+  .badge.ok { background: var(--success-bg); color: var(--success); }
+  .badge.err { background: var(--error-bg); color: var(--error); }
+  .badge.warn { background: var(--warn-bg); color: var(--warn); }
+
+  /* ── Status grid ── */
+  .status-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .status-item {
+    padding: 14px 16px;
+    background: var(--bg); border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .status-item .label {
+    font-size: 11px; font-weight: 600; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px;
+  }
+  .status-item .value {
+    font-size: 15px; font-weight: 600; color: var(--text);
+  }
+
+  /* ── Chunk cards ── */
+  .chunk-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .chunk-card .chunk-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px;
+  }
+  .chunk-card .chunk-idx {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--accent); background: var(--accent-light);
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .chunk-card .chunk-score {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+  }
+  .chunk-card .chunk-text {
+    font-size: 13px; line-height: 1.5; color: var(--text);
+  }
+  .chunk-card .chunk-vector {
+    margin-top: 6px; font-family: var(--mono); font-size: 11px;
+    color: var(--text-secondary); word-break: break-all;
+  }
+
+  /* ── Comparison layout ── */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .compare-col h4 {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .4px; margin-bottom: 8px; color: var(--accent);
+  }
+
+  /* ── Prompt display ── */
+  .prompt-box {
+    background: #1a1d23; color: #c8cdd5;
+    border-radius: 6px; padding: 16px;
+    font-family: var(--mono); font-size: 12px;
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 300px; overflow-y: auto;
+    margin-top: 10px; line-height: 1.6;
+  }
+
+  /* ── Toasts ── */
+  .toast-container {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .toast {
+    padding: 10px 16px; border-radius: 6px;
+    font-size: 13px; font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    animation: slideIn .25s ease-out;
+    max-width: 360px;
+  }
+  .toast.success { background: var(--success); color: #fff; }
+  .toast.error { background: var(--error); color: #fff; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { color: var(--text-secondary); font-size: 13px; padding: 12px 0; }
+
+  @media (max-width: 768px) {
+    nav { width: 60px; }
+    nav .brand span, nav a span:not(.icon) { display: none; }
+    nav .brand h1 { font-size: 12px; }
+    main { margin-left: 60px; padding: 20px; }
+    .status-grid, .compare-grid { grid-template-columns: 1fr; }
+    .form-inline { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav>
+  <div class="brand">
+    <h1>Libra Assist</h1>
+    <span>Admin Console</span>
+  </div>
+  <a class="active" data-section="status">
+    <span class="icon">⬡</span><span>Status</span>
+  </a>
+  <a data-section="chunk">
+    <span class="icon">▤</span><span>Chunk</span>
+  </a>
+  <a data-section="ingest">
+    <span class="icon">↓</span><span>Ingest</span>
+  </a>
+  <a data-section="collection">
+    <span class="icon">◫</span><span>Collection</span>
+  </a>
+  <a data-section="search">
+    <span class="icon">⌕</span><span>Search</span>
+  </a>
+  <a data-section="ask">
+    <span class="icon">◇</span><span>Ask</span>
+  </a>
+</nav>
+
+<!-- Toast container -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- Main content -->
+<main>
+
+  <!-- ═══ STATUS ═══ -->
+  <section id="sec-status" class="active">
+    <h2>Service Status</h2>
+    <p class="section-desc">Health check and configuration of the RAG Teaching API.</p>
+
+    <div class="card">
+      <h3>Health</h3>
+      <div id="health-grid" class="status-grid">
+        <div class="status-item"><div class="label">Status</div><div class="value" id="h-status">—</div></div>
+        <div class="status-item"><div class="label">Qdrant</div><div class="value" id="h-qdrant">—</div></div>
+        <div class="status-item"><div class="label">Chat provider</div><div class="value" id="h-chat">—</div></div>
+        <div class="status-item"><div class="label">Embedding provider</div><div class="value" id="h-embed">—</div></div>
+      </div>
+      <div style="margin-top:14px">
+        <button onclick="fetchHealth()">Refresh health</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Configuration</h3>
+      <div id="config-output" class="result-box"></div>
+      <div style="margin-top:14px">
+        <button onclick="fetchConfig()">Load config</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CHUNK ═══ -->
+  <section id="sec-chunk">
+    <h2>Chunk</h2>
+    <p class="section-desc">Split text into chunks using different strategies. No data is stored — this is a preview.</p>
+
+    <div class="card">
+      <div class="form-row">
+        <label for="chunk-text">Text to chunk</label>
+        <textarea id="chunk-text" placeholder="Paste your text here…"></textarea>
+      </div>
+      <div class="form-inline">
+        <div class="form-row">
+          <label for="chunk-strategy">Strategy</label>
+          <select id="chunk-strategy">
+            <option value="static">static</option>
+            <option value="sentence">sentence</option>
+            <option value="dynamic" selected>dynamic</option>
+            <option value="semantic">semantic</option>
+          </select>
+        </div>
+        <div class="form-row" style="flex:0">
+          <label>&nbsp;</label>
+          <button onclick="doChunk()">Chunk</button>
+        </div>
+      </div>
+      <div id="chunk-result"></div>
+    </div>
+  </section>
+
+  <!-- ═══ INGEST ═══ -->
+  <section id="sec-ingest">
+    <h2>Ingest</h2>
+    <p class="section-desc">Chunk text and store the resulting vectors in Qdrant.</p>
+
+    <div class="card">
+      <div class="form-row">
+        <label for="ingest-text">Text to ingest</label>
+        <textarea id="ingest-text" placeholder="Paste the knowledge text to store…"></textarea>
+      </div>
+      <div class="form-inline">
+        <div class="form-row">
+          <label for="ingest-strategy">Strategy</label>
+          <select id="ingest-strategy">
+            <option value="static">static</option>
+            <option value="sentence">sentence</option>
+            <option value="dynamic" selected>dynamic</option>
+            <option value="semantic">semantic</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="ingest-collection">Collection</label>
+          <input type="text" id="ingest-collection" placeholder="default" value="">
+        </div>
+        <div class="form-row" style="flex:0">
+          <label>&nbsp;</label>
+          <button onclick="doIngest()">Ingest</button>
+        </div>
+      </div>
+      <div id="ingest-result"></div>
+    </div>
+  </section>
+
+  <!-- ═══ COLLECTION ═══ -->
+  <section id="sec-collection">
+    <h2>Collection</h2>
+    <p class="section-desc">Inspect what's stored in Qdrant and reset when needed.</p>
+
+    <div class="card">
+      <h3>Stored data</h3>
+      <div id="collection-info" class="result-box" style="display:block;min-height:40px">Click "Load" to fetch collection details.</div>
+      <div style="margin-top:14px; display:flex; gap:10px">
+        <button onclick="fetchCollection()">Load collection</button>
+        <button class="danger" onclick="deleteCollection()">Delete collection</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SEARCH ═══ -->
+  <section id="sec-search">
+    <h2>Search</h2>
+    <p class="section-desc">Semantic search over ingested chunks. Results ranked by cosine similarity.</p>
+
+    <div class="card">
+      <div class="form-row">
+        <label for="search-query">Query</label>
+        <input type="text" id="search-query" placeholder="Type a search query…">
+      </div>
+      <div class="form-inline">
+        <div class="form-row">
+          <label for="search-topk">top_k</label>
+          <input type="number" id="search-topk" value="3" min="1" max="20">
+        </div>
+        <div class="form-row">
+          <label for="search-collection">Collection</label>
+          <input type="text" id="search-collection" placeholder="default" value="">
+        </div>
+        <div class="form-row" style="flex:0">
+          <label>&nbsp;</label>
+          <button onclick="doSearch()">Search</button>
+        </div>
+      </div>
+      <div id="search-result"></div>
+    </div>
+  </section>
+
+  <!-- ═══ ASK ═══ -->
+  <section id="sec-ask">
+    <h2>Ask</h2>
+    <p class="section-desc">Ask a question — toggle RAG to see the difference retrieval makes.</p>
+
+    <div class="card">
+      <div class="form-row">
+        <label for="ask-question">Question</label>
+        <input type="text" id="ask-question" placeholder="Type your question…">
+      </div>
+      <div class="form-inline">
+        <div class="form-row">
+          <label>Use RAG</label>
+          <div class="toggle-wrap">
+            <div class="toggle" id="ask-rag-toggle" onclick="toggleRag(this)"></div>
+            <span class="toggle-label" id="ask-rag-label">Off</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="ask-topk">top_k</label>
+          <input type="number" id="ask-topk" value="3" min="1" max="20">
+        </div>
+        <div class="form-row" style="flex:0">
+          <label>&nbsp;</label>
+          <button onclick="doAsk()">Ask</button>
+        </div>
+        <div class="form-row" style="flex:0">
+          <label>&nbsp;</label>
+          <button class="secondary" onclick="doAskCompare()">Compare ± RAG</button>
+        </div>
+      </div>
+      <div id="ask-result"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const API = 'http://localhost:7799';
+
+// ── Persistence (stretch goal) ──
+function saveSettings() {
+  try {
+    localStorage.setItem('libra-admin', JSON.stringify({
+      chunkStrategy: qs('#chunk-strategy').value,
+      ingestStrategy: qs('#ingest-strategy').value,
+      searchTopK: qs('#search-topk').value,
+      askTopK: qs('#ask-topk').value,
+    }));
+  } catch(e) {}
+}
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem('libra-admin'));
+    if (!s) return;
+    if (s.chunkStrategy) qs('#chunk-strategy').value = s.chunkStrategy;
+    if (s.ingestStrategy) qs('#ingest-strategy').value = s.ingestStrategy;
+    if (s.searchTopK) qs('#search-topk').value = s.searchTopK;
+    if (s.askTopK) qs('#ask-topk').value = s.askTopK;
+  } catch(e) {}
+}
+
+// ── Helpers ──
+const qs = s => document.querySelector(s);
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  qs('#toasts').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+async function api(path, opts = {}) {
+  const res = await fetch(`${API}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) {
+    const detail = data?.detail || data?.message || res.statusText;
+    throw { status: res.status, detail };
+  }
+  return data;
+}
+
+function badge(ok) {
+  return `<span class="badge ${ok ? 'ok' : 'err'}">${ok ? 'ok' : 'error'}</span>`;
+}
+
+function renderChunks(chunks, showScore = false, showVector = false) {
+  if (!chunks || !chunks.length) return '<p style="color:var(--text-secondary);font-size:13px;padding:8px 0">No chunks returned.</p>';
+  return chunks.map((c, i) => {
+    const text = typeof c === 'string' ? c : (c.text || c.content || c.chunk || JSON.stringify(c));
+    const score = c.score != null ? c.score : null;
+    const vector = c.vector || c.embedding || null;
+    return `
+      <div class="chunk-card">
+        <div class="chunk-meta">
+          <span class="chunk-idx">#${i + 1}</span>
+          ${showScore && score != null ? `<span class="chunk-score" style="color:${score > 0.7 ? 'var(--success)' : score > 0.4 ? 'var(--warn)' : 'var(--error)'}">score ${score.toFixed(4)}</span>` : ''}
+        </div>
+        <div class="chunk-text">${escHtml(text)}</div>
+        ${showVector && vector ? `<div class="chunk-vector">vector: [${vector.slice(0, 8).map(v => v.toFixed(4)).join(', ')}… ] (${vector.length}d)</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+
+// ── Navigation ──
+document.querySelectorAll('nav a[data-section]').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelectorAll('nav a').forEach(l => l.classList.remove('active'));
+    a.classList.add('active');
+    document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+    qs(`#sec-${a.dataset.section}`).classList.add('active');
+  });
+});
+
+// ── 1. STATUS ──
+async function fetchHealth() {
+  try {
+    const d = await api('/health');
+    qs('#h-status').innerHTML = badge(d.status === 'ok');
+    qs('#h-qdrant').innerHTML = badge(d.qdrant === 'ok');
+    qs('#h-chat').textContent = d.chat_provider || d.chat_model || '—';
+    qs('#h-embed').textContent = d.embedding_provider || d.embedding_model || '—';
+    toast('Health check passed');
+  } catch (e) {
+    qs('#h-status').innerHTML = badge(false);
+    toast(`Health check failed: ${e.status || ''} ${e.detail || e.message || e}`, 'error');
+  }
+}
+
+async function fetchConfig() {
+  try {
+    const d = await api('/config');
+    qs('#config-output').textContent = JSON.stringify(d, null, 2);
+  } catch (e) {
+    qs('#config-output').textContent = `Error ${e.status || ''}: ${e.detail || e.message || e}`;
+    toast(`Config fetch failed`, 'error');
+  }
+}
+
+// ── 2. CHUNK ──
+async function doChunk() {
+  const text = qs('#chunk-text').value.trim();
+  if (!text) return toast('Enter some text first', 'error');
+  const strategy = qs('#chunk-strategy').value;
+  saveSettings();
+  const out = qs('#chunk-result');
+  out.innerHTML = '<p class="loading-text">Chunking…</p>';
+  try {
+    const d = await api('/chunk', {
+      method: 'POST',
+      body: JSON.stringify({ text, strategy }),
+    });
+    const chunks = d.chunks || d;
+    const count = Array.isArray(chunks) ? chunks.length : '?';
+    out.innerHTML = `<p style="margin:12px 0 8px;font-size:13px;font-weight:600">${count} chunk(s) · strategy: ${strategy}</p>` + renderChunks(chunks);
+  } catch (e) {
+    out.innerHTML = `<div class="result-box" style="display:block;color:var(--error)">Error ${e.status || ''}: ${e.detail || e}</div>`;
+  }
+}
+
+// ── 3. INGEST ──
+async function doIngest() {
+  const text = qs('#ingest-text').value.trim();
+  if (!text) return toast('Enter text to ingest', 'error');
+  const strategy = qs('#ingest-strategy').value;
+  const collection = qs('#ingest-collection').value.trim() || undefined;
+  saveSettings();
+  const out = qs('#ingest-result');
+  out.innerHTML = '<p class="loading-text">Ingesting…</p>';
+  try {
+    const body = { text, strategy };
+    if (collection) body.collection = collection;
+    const d = await api('/ingest', { method: 'POST', body: JSON.stringify(body) });
+    const chunks = d.chunks || [];
+    const dim = d.dimension || d.vector_dimension || '?';
+    const stored = d.stored || d.count || (Array.isArray(chunks) ? chunks.length : '?');
+    out.innerHTML = `
+      <div class="status-grid" style="margin:12px 0">
+        <div class="status-item"><div class="label">Chunks stored</div><div class="value">${stored}</div></div>
+        <div class="status-item"><div class="label">Vector dimension</div><div class="value">${dim}</div></div>
+      </div>` + renderChunks(chunks, false, true);
+    toast(`Ingested ${stored} chunk(s)`);
+  } catch (e) {
+    out.innerHTML = `<div class="result-box" style="display:block;color:var(--error)">Error ${e.status || ''}: ${e.detail || e}</div>`;
+    toast(`Ingest failed: ${e.detail || e}`, 'error');
+  }
+}
+
+// ── 4. COLLECTION ──
+async function fetchCollection() {
+  const out = qs('#collection-info');
+  out.style.display = 'block';
+  out.textContent = 'Loading…';
+  try {
+    const d = await api('/collection');
+    out.textContent = JSON.stringify(d, null, 2);
+  } catch (e) {
+    out.textContent = `Error ${e.status || ''}: ${e.detail || e}`;
+  }
+}
+
+async function deleteCollection() {
+  if (!confirm('This will permanently delete all stored vectors. Continue?')) return;
+  try {
+    await api('/collection', { method: 'DELETE' });
+    qs('#collection-info').textContent = 'Collection deleted.';
+    toast('Collection deleted');
+  } catch (e) {
+    toast(`Delete failed: ${e.status || ''} ${e.detail || e}`, 'error');
+  }
+}
+
+// ── 5. SEARCH ──
+async function doSearch() {
+  const query = qs('#search-query').value.trim();
+  if (!query) return toast('Enter a search query', 'error');
+  const top_k = parseInt(qs('#search-topk').value) || 3;
+  const collection = qs('#search-collection').value.trim() || undefined;
+  saveSettings();
+  const out = qs('#search-result');
+  out.innerHTML = '<p class="loading-text">Searching…</p>';
+  try {
+    const body = { query, top_k };
+    if (collection) body.collection = collection;
+    const d = await api('/search', { method: 'POST', body: JSON.stringify(body) });
+    const results = d.results || d.chunks || d;
+    out.innerHTML = `<p style="margin:12px 0 8px;font-size:13px;font-weight:600">${Array.isArray(results) ? results.length : '?'} result(s)</p>` + renderChunks(results, true, true);
+  } catch (e) {
+    out.innerHTML = `<div class="result-box" style="display:block;color:var(--error)">Error ${e.status || ''}: ${e.detail || e}</div>`;
+  }
+}
+
+// ── 6. ASK ──
+let ragOn = false;
+function toggleRag(el) {
+  ragOn = !ragOn;
+  el.classList.toggle('on', ragOn);
+  qs('#ask-rag-label').textContent = ragOn ? 'On' : 'Off';
+}
+
+async function doAsk() {
+  const question = qs('#ask-question').value.trim();
+  if (!question) return toast('Enter a question', 'error');
+  const top_k = parseInt(qs('#ask-topk').value) || 3;
+  saveSettings();
+  const out = qs('#ask-result');
+  out.innerHTML = '<p class="loading-text">Thinking…</p>';
+  try {
+    const d = await api('/ask', {
+      method: 'POST',
+      body: JSON.stringify({ question, use_rag: ragOn, top_k }),
+    });
+    out.innerHTML = renderAskResult(d);
+  } catch (e) {
+    out.innerHTML = `<div class="result-box" style="display:block;color:var(--error)">Error ${e.status || ''}: ${e.detail || e}</div>`;
+  }
+}
+
+// Stretch: side-by-side comparison
+async function doAskCompare() {
+  const question = qs('#ask-question').value.trim();
+  if (!question) return toast('Enter a question', 'error');
+  const top_k = parseInt(qs('#ask-topk').value) || 3;
+  saveSettings();
+  const out = qs('#ask-result');
+  out.innerHTML = '<p class="loading-text">Running both (without and with RAG)…</p>';
+  try {
+    const [noRag, withRag] = await Promise.all([
+      api('/ask', { method: 'POST', body: JSON.stringify({ question, use_rag: false, top_k }) }),
+      api('/ask', { method: 'POST', body: JSON.stringify({ question, use_rag: true, top_k }) }),
+    ]);
+    out.innerHTML = `
+      <div class="compare-grid" style="margin-top:14px">
+        <div class="compare-col">
+          <h4>Without RAG</h4>
+          ${renderAskResult(noRag)}
+        </div>
+        <div class="compare-col">
+          <h4>With RAG</h4>
+          ${renderAskResult(withRag)}
+        </div>
+      </div>`;
+  } catch (e) {
+    out.innerHTML = `<div class="result-box" style="display:block;color:var(--error)">Error ${e.status || ''}: ${e.detail || e}</div>`;
+  }
+}
+
+function renderAskResult(d) {
+  const answer = d.answer || d.response || '—';
+  const chunks = d.chunks || d.context || d.retrieved_chunks || [];
+  const prompt = d.prompt_sent || d.prompt || null;
+  let html = `<div class="card" style="margin-top:10px">
+    <h3>Answer</h3>
+    <div style="font-size:14px;line-height:1.7">${escHtml(answer)}</div>
+  </div>`;
+  if (chunks.length) {
+    html += `<div class="card">
+      <h3>Retrieved chunks</h3>
+      ${renderChunks(chunks, true, true)}
+    </div>`;
+  }
+  if (prompt) {
+    html += `<div class="card">
+      <h3>Prompt sent to LLM</h3>
+      <div class="prompt-box">${escHtml(prompt)}</div>
+    </div>`;
+  }
+  return html;
+}
+
+// ── Init ──
+loadSettings();
+fetchHealth();
+</script>
+</body>
+</html>
