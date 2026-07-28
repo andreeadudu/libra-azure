@@ -52,7 +52,7 @@ class VectorStore:
     # --- data ----------------------------------------------------------------
     def upsert(self, chunks: list[str], vectors: list[list[float]], strategy: str,
                source: str | None) -> list[str]:
-        ids = [str(uuid.uuid4()) for _ in chunks]
+        ids = [str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{source or 'adhoc'}::{i}")) for i in range(len(chunks))]
         now = datetime.now(timezone.utc).isoformat(timespec="seconds")
         self.client.upsert(
             collection_name=self.collection,
