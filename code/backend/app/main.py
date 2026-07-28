@@ -41,6 +41,9 @@ app.add_middleware(
 
 store = VectorStore()
 
+# Improvement 1: score threshold — hits below this floor are dropped
+SCORE_THRESHOLD = 0.5
+
 
 # --- helpers ------------------------------------------------------------------
 def _chunk_params(req: ChunkRequest) -> dict:
@@ -103,6 +106,29 @@ def _require_qdrant() -> None:
         )
 
 
+def _apply_retrieval_improvements(hits: list[dict]) -> list[dict]:
+    """
+    Improvement 1: Score threshold — drop hits below SCORE_THRESHOLD.
+    Weak hits lead to confident wrong answers; better to say 'nothing relevant found'.
+
+    Improvement 2: Deduplication — keep only the best chunk per source document.
+    Returning 3 chunks from the same document wastes context and hides other facts.
+    """
+    # Improvement 1: score threshold
+    hits = [h for h in hits if h["score"] >= SCORE_THRESHOLD]
+
+    # Improvement 2: deduplication — max 1 chunk per source
+    seen_sources: set[str] = set()
+    deduped = []
+    for h in hits:
+        src = h.get("source", "")
+        if src not in seen_sources:
+            deduped.append(h)
+            seen_sources.add(src)
+
+    return deduped
+
+
 # --- ops ----------------------------------------------------------------------
 @app.get("/health", response_model=Health, tags=["ops"])
 def health() -> Health:
@@ -162,12 +188,7 @@ def config() -> dict:
 
 @app.get("/azure", response_model=AzureStatus, tags=["ops"])
 def azure_status() -> AzureStatus:
-    """The Azure environment this app is pointed at, plus its live deployments.
-
-    Deployment data comes from the control plane (Azure Resource Manager), which
-    needs an Entra token — so under key authentication the list is unavailable and
-    says so, rather than appearing empty.
-    """
+    """The Azure environment this app is pointed at, plus its live deployments."""
     resource = settings.azure_foundry_resource
     project = settings.azure_foundry_project
     identity = settings.azure_ai_auth.lower() == "identity"
@@ -219,7 +240,7 @@ def azure_status() -> AzureStatus:
                         state=props.get("provisioningState"),
                     ))
                 deployments = AzureDeployments(available=True, items=items)
-        except Exception as e:                    # noqa: BLE001 - report, never crash the panel
+        except Exception as e:
             deployments = AzureDeployments(available=False, reason=f"{type(e).__name__}: {e}")
 
     return AzureStatus(
@@ -247,8 +268,7 @@ def azure_status() -> AzureStatus:
 # --- chunking (no storage) ----------------------------------------------------
 @app.post("/chunk", response_model=ChunkResponse, tags=["1 · chunking"])
 def chunk_only(req: ChunkRequest) -> ChunkResponse:
-    """Split text and LOOK at the result — nothing is stored. Try the same text
-    with all four strategies and compare the boundaries."""
+    """Split text and LOOK at the result — nothing is stored."""
     pieces, p = _do_chunk(req)
     return ChunkResponse(strategy=p["strategy"], params_used=p, count=len(pieces),
                          chunks=_chunk_infos(pieces))
@@ -257,8 +277,7 @@ def chunk_only(req: ChunkRequest) -> ChunkResponse:
 # --- ingestion ----------------------------------------------------------------
 @app.post("/ingest", response_model=IngestResponse, tags=["2 · ingestion"])
 def ingest(req: IngestRequest) -> IngestResponse:
-    """Chunk -> embed -> store in Qdrant. The response shows the chunks, the
-    vector dimension, and a peek at the first embedding."""
+    """Chunk -> embed -> store in Qdrant."""
     _require_qdrant()
     pieces, p = _do_chunk(req)
     if not pieces:
@@ -293,14 +312,19 @@ def collection_reset() -> dict:
 # --- retrieval ----------------------------------------------------------------
 @app.post("/search", response_model=SearchResponse, tags=["3 · retrieval"])
 def search(req: SearchRequest) -> SearchResponse:
-    """Embed the query, return the nearest chunks with their cosine similarity
-    scores — retrieval with the curtain open."""
+    """Embed the query, return the nearest chunks with their cosine similarity scores.
+
+    Improvements applied:
+    - Score threshold (>= 0.5): weak hits are dropped instead of becoming wrong answers.
+    - Deduplication: only the best chunk per source document is kept.
+    """
     _require_qdrant()
     if not store.info()["exists"]:
         raise HTTPException(status_code=404, detail="Collection is empty — POST /ingest first.")
     top_k = req.top_k or settings.top_k
     qvec = _embed([req.query])[0]
     hits = store.search(qvec, top_k)
+    hits = _apply_retrieval_improvements(hits)
     return SearchResponse(
         query=req.query, top_k=top_k, embedding_model=_embedder().describe(),
         query_embedding_preview=[round(x, 5) for x in qvec[:8]],
@@ -311,18 +335,9 @@ def search(req: SearchRequest) -> SearchResponse:
 # --- generation ---------------------------------------------------------------
 @app.post("/ask", response_model=AskResponse, tags=["4 · generation"])
 def ask(req: AskRequest) -> AskResponse:
-    """The finale: an **agent** answers, with or without retrieval.
-
-    Three dials to demonstrate, one at a time:
-      * `use_rag`      — false = the model alone; true = retrieve, then augment.
-      * `agent`        — which persona shapes the answer (edit its JSON and re-ask!).
-      * `agent_mode`   — `local` runs the loop here; `foundry` calls the hosted agent.
-
-    `system_prompt` and `prompt_sent` always show exactly what went to the model.
-    """
+    """The finale: an agent answers, with or without retrieval."""
     retrieved: list[SearchHit] = []
 
-    # ---- which persona, and does it need to be local? ------------------------
     persona_name = req.agent or settings.agent_persona
     mode_requested = (req.agent_mode or settings.agent_mode).lower()
     persona = None
@@ -330,8 +345,6 @@ def ask(req: AskRequest) -> AskResponse:
     try:
         persona = load_persona(persona_name)
     except PersonaNotFound as e:
-        # In foundry mode the instructions may live in Azure rather than on disk —
-        # an agent created in the portal has no local file, and should still work.
         if mode_requested != "foundry":
             raise HTTPException(status_code=404, detail=str(e))
         try:
@@ -341,21 +354,21 @@ def ask(req: AskRequest) -> AskResponse:
         if not hosted_only:
             raise HTTPException(status_code=404, detail=str(e))
 
-    # ---- retrieval (unchanged behaviour, now feeding the agent) -------------
     if req.use_rag:
         _require_qdrant()
         if not store.info()["exists"]:
             raise HTTPException(status_code=404,
-                                detail="use_rag=true but the collection is empty — POST /ingest first, "
-                                       "or set use_rag=false for a plain LLM answer.")
+                                detail="use_rag=true but the collection is empty — POST /ingest first.")
         top_k = req.top_k or settings.top_k
         qvec = _embed([req.question])[0]
-        retrieved = [SearchHit(**h) for h in store.search(qvec, top_k)]
+        raw_hits = store.search(qvec, top_k)
+        # Apply retrieval improvements also in /ask
+        raw_hits = _apply_retrieval_improvements(raw_hits)
+        retrieved = [SearchHit(**h) for h in raw_hits]
 
     chunks = [h.model_dump() for h in retrieved]
     mode = mode_requested
 
-    # ---- run the agent ------------------------------------------------------
     try:
         if hosted_only is not None:
             reply = foundry_agent.run_hosted(hosted_only, req.question, chunks)
@@ -395,16 +408,7 @@ def ask(req: AskRequest) -> AskResponse:
 # --- agents -------------------------------------------------------------------
 @app.get("/agents", response_model=AgentListResponse, tags=["5 · agents"])
 def agents_list() -> AgentListResponse:
-    """Every agent, and **where each one can run**.
-
-    * `local`   — a JSON file exists here; runs in this process with any provider
-    * `both`    — the file exists *and* a hosted agent of the same name is in Foundry
-    * `foundry` — hosted only: it exists in Foundry with no local file (made in the portal)
-    * `unknown` — we could not ask Foundry (key auth cannot query the Agent Service)
-
-    The last state is deliberate: under `AZURE_AI_AUTH=key` the answer is genuinely
-    unknown, and reporting "not deployed" would be a guess.
-    """
+    """Every agent, and where each one can run."""
     personas = list_personas()
     availability = foundry_agent.availability()
 
@@ -412,7 +416,7 @@ def agents_list() -> AgentListResponse:
     if availability["available"]:
         try:
             hosted_by_name = {a["name"]: a for a in foundry_agent.list_hosted()}
-        except Exception as e:                    # noqa: BLE001 - degrade, never guess
+        except Exception as e:
             availability = {"available": False, "reason": f"{type(e).__name__}: {e}"}
 
     summaries: list[PersonaSummary] = []
@@ -445,8 +449,7 @@ def agents_list() -> AgentListResponse:
 
 @app.get("/agents/hosted", tags=["5 · agents"])
 def agents_hosted() -> dict:
-    """What actually exists in the Foundry Agent Service right now — whatever
-    created it: our scripts, the SDK, or somebody clicking in the portal."""
+    """What actually exists in the Foundry Agent Service right now."""
     availability = foundry_agent.availability()
     if not availability["available"]:
         raise HTTPException(status_code=503, detail=availability["reason"])
@@ -458,8 +461,7 @@ def agents_hosted() -> dict:
 
 @app.delete("/agents/hosted/{agent_id}", tags=["5 · agents"])
 def agent_hosted_delete(agent_id: str) -> dict:
-    """Remove an agent from Foundry. The local JSON file is untouched — the
-    persona keeps working in local mode."""
+    """Remove an agent from Foundry."""
     try:
         foundry_agent.delete_hosted(agent_id)
     except foundry_agent.FoundryUnavailable as e:
@@ -471,8 +473,7 @@ def agent_hosted_delete(agent_id: str) -> dict:
 
 @app.get("/agents/{name}", tags=["5 · agents"])
 def agent_detail(name: str) -> dict:
-    """One persona, including **the exact system prompt** its JSON produces —
-    grounded and ungrounded. The clearest way to see JSON become behaviour."""
+    """One persona, including the exact system prompt its JSON produces."""
     try:
         persona = load_persona(name)
     except PersonaNotFound as e:
@@ -487,12 +488,7 @@ def agent_detail(name: str) -> dict:
 
 @app.post("/agents/{name}/deploy", tags=["5 · agents"])
 def agent_deploy(name: str) -> dict:
-    """Publish this persona to the Azure AI Foundry **Agent Service**.
-
-    The same thing `python scripts/deploy_agent.py <name>` does — exposed here so
-    it can be demonstrated from Swagger. Requires AZURE_AI_PROJECT_ENDPOINT and
-    an Entra identity with the Azure AI User role on the project.
-    """
+    """Publish this persona to the Azure AI Foundry Agent Service."""
     try:
         persona = load_persona(name)
     except PersonaNotFound as e:
@@ -513,12 +509,7 @@ def agent_deploy(name: str) -> dict:
 # --- tools / specialist services ----------------------------------------------
 @app.post("/tools/web-fetch", response_model=ScrapeResponse, tags=["6 · tools"])
 def web_fetch(req: ScrapeRequest) -> ScrapeResponse:
-    """Fetch a page and strip it to text — **the do-it-yourself lane**.
-
-    Read the `warnings` array: it lists everything this naive approach could not
-    handle (JavaScript rendering, bot walls, consent banners, non-HTML formats).
-    That list is the argument for a managed grounding tool.
-    """
+    """Fetch a page and strip it to text."""
     try:
         result = web.scrape(req.url, max_chars=req.max_chars or 20000)
     except Exception as e:
@@ -529,7 +520,7 @@ def web_fetch(req: ScrapeRequest) -> ScrapeResponse:
 @app.post("/tools/speak", tags=["6 · tools"],
           responses={200: {"content": {"audio/wav": {}}, "description": "WAV audio"}})
 def speak(req: SpeakRequest):
-    """Text → speech (Azure AI Speech). Returns a WAV file you can play or download."""
+    """Text → speech (Azure AI Speech). Returns a WAV file."""
     try:
         audio = speech.synthesize(req.text, req.voice)
     except speech.SpeechUnavailable as e:
@@ -542,8 +533,7 @@ def speak(req: SpeakRequest):
 
 @app.post("/tools/transcribe", response_model=TranscribeResponse, tags=["6 · tools"])
 async def transcribe(file: UploadFile = File(..., description="WAV, 16 kHz mono, under ~60 s")):
-    """Speech → text (Azure AI Speech). Upload the WAV you just generated and
-    watch it come back as text — the round trip in two calls."""
+    """Speech → text (Azure AI Speech)."""
     audio = await file.read()
     if not audio:
         raise HTTPException(status_code=422, detail="The uploaded file is empty.")
