@@ -54,6 +54,20 @@ class VectorStore:
                source: str | None) -> list[str]:
         ids = [str(uuid.uuid5(uuid.NAMESPACE_DNS, f"{source or 'adhoc'}::{i}")) for i in range(len(chunks))]
         now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        if source:
+            # a re-ingest that produces fewer chunks than a prior run must not leave
+            # the old, higher-index chunks behind as stale orphans
+            self.client.delete(
+                collection_name=self.collection,
+                points_selector=models.FilterSelector(
+                    filter=models.Filter(
+                        must=[
+                            models.FieldCondition(key="source", match=models.MatchValue(value=source)),
+                            models.FieldCondition(key="index", range=models.Range(gte=len(chunks))),
+                        ]
+                    )
+                ),
+            )
         self.client.upsert(
             collection_name=self.collection,
             points=[

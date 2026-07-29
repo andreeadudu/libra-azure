@@ -12,9 +12,23 @@ export default function Chat({ agents, hostedOnly = [], foundry }) {
   const [topK, setTopK] = useState(3)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
+  const [speech, setSpeech] = useState({}) // message index -> { busy, url, error }
   const endRef = useRef(null)
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, busy])
+
+  async function listen(i, text) {
+    setSpeech((s) => ({ ...s, [i]: { busy: true, url: s[i]?.url, error: null } }))
+    try {
+      const blob = await api.speak({ text })
+      setSpeech((s) => {
+        if (s[i]?.url) URL.revokeObjectURL(s[i].url)
+        return { ...s, [i]: { busy: false, url: URL.createObjectURL(blob), error: null } }
+      })
+    } catch (e) {
+      setSpeech((s) => ({ ...s, [i]: { busy: false, url: s[i]?.url, error: e.message } }))
+    }
+  }
 
   async function send() {
     const text = question.trim()
@@ -101,10 +115,14 @@ export default function Chat({ agents, hostedOnly = [], foundry }) {
       <div className="msgs">
         {messages.length === 0 && (
           <div className="card" style={{ alignSelf: 'center', maxWidth: '46rem', textAlign: 'center' }}>
-            <h3>Libra Assist</h3>
+            <span className="brand-mark" style={{ margin: '0 auto .7rem' }}>
+              {(current?.display_name || 'L').charAt(0)}
+            </span>
+            <h3 style={{ margin: '0 0 .4rem' }}>{current?.display_name || 'Libra Assist'}</h3>
             <p className="muted" style={{ margin: 0 }}>
-              Ask a question about the documents you have ingested. Switch the persona to change how
-              it answers, or turn RAG off to see the model answer without grounding.
+              {current?.description
+                || 'Ask a question about the documents you have ingested. Switch the persona to change how '
+                   + 'it answers, or turn RAG off to see the model answer without grounding.'}
             </p>
           </div>
         )}
@@ -113,6 +131,7 @@ export default function Chat({ agents, hostedOnly = [], foundry }) {
           if (m.role === 'user') return <div className="msg user" key={i}>{m.text}</div>
           if (m.role === 'err') return <div className="msg err" key={i}><strong>Request failed:</strong> {m.text}</div>
           const d = m.data
+          const sp = speech[i]
           return (
             <div className="msg bot" key={i}>
               {d.answer}
@@ -122,7 +141,13 @@ export default function Chat({ agents, hostedOnly = [], foundry }) {
                 <span className="badge muted">{d.agent?.mode}</span>
                 <span className="badge muted">{d.model}</span>
                 {d.usage && <span className="badge muted">{d.usage.prompt_tokens}↑ {d.usage.completion_tokens}↓ tokens</span>}
+                <button className="btn btn-outline btn-sm" onClick={() => listen(i, d.answer)} disabled={sp?.busy}
+                        title="Read this answer aloud (Azure AI Speech)">
+                  {sp?.busy ? <><span className="spin" /> synthesizing…</> : '🔊 listen'}
+                </button>
               </div>
+              {sp?.error && <div className="err" style={{ marginTop: '.4rem' }}>{sp.error}</div>}
+              {sp?.url && <audio controls autoPlay src={sp.url} style={{ marginTop: '.5rem', width: '100%' }} />}
               {d.fact_check && (
                 <div className="src" style={{ marginTop: '.55rem',
                      borderLeftColor: d.fact_check.verdict === 'supported' ? 'var(--c-teal)'

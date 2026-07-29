@@ -23,7 +23,7 @@ export default function App() {
   const [foundry, setFoundry] = useState(null)
   const [health, setHealth] = useState(null)
   const [azure, setAzure] = useState(null)
-  const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState('light')
 
   const loadAgents = useCallback(() => {
     api.agents()
@@ -46,7 +46,10 @@ export default function App() {
   return (
     <div className="app">
       <aside className="side">
-        <p className="brand">Libra Assist<small>console</small></p>
+        <div className="brand">
+          <span className="brand-mark">L</span>
+          <p className="brand-text">Libra Assist<small>console</small></p>
+        </div>
         {groups.map((g) => (
           <div key={g}>
             <div className="nav-group">{g}</div>
@@ -60,7 +63,7 @@ export default function App() {
         <div className="side-foot">
           <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem', marginBottom: '.4rem' }}>
             <span className="dot" style={{ width: 7, height: 7, borderRadius: '50%',
-              background: online ? 'var(--c-cyan)' : 'var(--c-crimson)', display: 'inline-block' }} />
+              background: online ? 'var(--c-teal)' : 'var(--c-crimson)', display: 'inline-block' }} />
             {online ? `${health.llm.provider} · ${health.llm.model}` : 'backend offline'}
           </div>
           {azure?.configured && (

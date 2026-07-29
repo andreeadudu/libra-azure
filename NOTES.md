@@ -1,6 +1,6 @@
 # NOTES.md — Libra Assist RAG Project
 
-## 1. Ingestion improvements (Part 4)
+## 1. Ingestion improvements 
 
 ### Improvement 1 — Stable chunk IDs
 
@@ -32,7 +32,7 @@ It is now possible to filter by `effective` so that only the 2026 fee schedule i
 
 ---
 
-## 2. Retrieval improvements (Part 5)
+## 2. Retrieval improvements 
 
 ### Improvement 1 — Score threshold (minimum 0.5)
 
@@ -122,6 +122,8 @@ It is now possible to filter by `effective` so that only the 2026 fee schedule i
 The largest group of failures (A1, A6, A7) comes from dynamic chunking cutting documents right before the sections that hold the numeric information. Chunk 0 of every document contains the YAML header plus the introduction, while the "Caracteristici principale" section with the amounts and percentages ends up in the next chunk, which is not retrieved.
 
 **What I would do:** Implement Markdown-header-based chunking (Improvement 3 from Part 4) — each `##` section would become its own chunk, keeping the section title together with its content.
+
+This chunking failure is systemic, not isolated — it also affects the mortgage product's maximum amount (1,500,000 RON, doc `07-mortgage-loan-guide`), reproduced with a different persona ("Credit Product Specialist"), confirming the root cause is chunk boundaries, not persona-specific behavior.
 
 ### Problem C2: hallucination on questions with no answer in the corpus
 

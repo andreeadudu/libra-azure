@@ -37,8 +37,9 @@ def ingest_file(filepath: str, source: str) -> bool:
     metadata, content = parse_yaml_header(raw)
 
     payload = {
-        "text": raw,          # trimitem textul complet (cu header) pentru chunking
+        "text": content,       # body only — the YAML header is metadata, not retrievable text
         "strategy": "dynamic",
+        "chunk_size": 2000,    # every corpus doc body is under ~1700 chars — keep each one whole
         "source": source,
         "metadata": {
             "title": metadata.get("title", source),
@@ -67,9 +68,10 @@ def main():
     data_dir = os.path.abspath(DATA_DIR)
     print(f"Corpus folder: {data_dir}\n")
 
+    excluded = {"README.md", "questions.md"}  # docs about the corpus, not part of it
     files = sorted([
         f for f in os.listdir(data_dir)
-        if f.endswith(".md") and f != "README.md"
+        if f.endswith(".md") and f not in excluded
     ])
 
     print(f"Found {len(files)} documents to ingest:\n")

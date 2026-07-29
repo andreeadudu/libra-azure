@@ -106,7 +106,7 @@ export default function Agents({ agents, hostedOnly = [], foundry, reload, azure
                     {a.hosted && (
                       confirming === a.name ? (
                         <>
-                          <button className="btn btn-sm" style={{ background: 'var(--grad-cta)', color: '#fff' }}
+                          <button className="btn btn-primary btn-sm"
                                   disabled={!!busy}
                                   onClick={() => act(a.name, () => api.deleteHostedAgent(a.hosted.agent_id),
                                     () => `removed ${a.name} from Foundry`)}>
