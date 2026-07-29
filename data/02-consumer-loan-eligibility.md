@@ -1,39 +1,39 @@
 ---
-title: Conditii de eligibilitate credite de consum
+title: Eligibility conditions for consumer loans
 product: credite-consum
 audience: retail
 effective: 2026-01-01
 version: 3
 ---
 
-# Conditii de eligibilitate - Credite de consum
+# Eligibility conditions - Consumer loans
 
-## Conditii obligatorii
+## Mandatory conditions
 
-1. Varsta minima 18 ani la data depunerii cererii
-2. Varsta maxima 70 ani la data scadentei finale
-3. Cetatenie romana sau permis de sedere permanent in Romania
-4. Venit net lunar minim de 1.500 RON din surse acceptate
-5. Vechime minima la actualul angajator: 3 luni pentru contract nedeterminat
-6. Fara restante active in Biroul de Credit la data solicitarii
-7. Fara executari silite active
+1. Minimum age of 18 at the date the application is submitted
+2. Maximum age of 70 at the final maturity date
+3. Romanian citizenship or a permanent residence permit in Romania
+4. Minimum net monthly income of 1,500 RON from accepted sources
+5. Minimum tenure with the current employer: 3 months for an open-ended contract
+6. No active arrears at the Credit Bureau at the time of the request
+7. No active enforcement proceedings
 
-## Surse de venit acceptate
+## Accepted income sources
 
-- Salariu net din contracte de munca pe durata nedeterminata
-- Pensie de stat sau pensie privata
-- Venituri din chirii dovedite cu contracte inregistrate la ANAF
-- Dividende dovedite cu ultimele doua declaratii fiscale
+- Net salary from open-ended employment contracts
+- State pension or private pension
+- Rental income proven with contracts registered with ANAF (the Romanian tax authority)
+- Dividends proven with the last two tax returns
 
-## Documente necesare
+## Required documents
 
-- Carte de identitate valabila
-- Adeverinta de salariu emisa in ultimele 30 de zile
-- Ultimele 3 fluturasi de salariu
-- Extras de cont pentru ultimele 3 luni
+- Valid identity card
+- Salary certificate issued within the last 30 days
+- Last 3 payslips
+- Account statement for the last 3 months
 
-## Conditii care duc la respingerea automata
+## Conditions leading to automatic rejection
 
-- Restante curente in Biroul de Credit peste 30 de zile
-- Dosar de insolventa sau faliment personal activ
-- Venit exclusiv din activitati ocazionale nedovedite
+- Current arrears at the Credit Bureau exceeding 30 days
+- An active personal insolvency or bankruptcy case
+- Income exclusively from unproven occasional activities

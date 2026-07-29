@@ -1,29 +1,29 @@
 ---
-title: Penalitati si comisioane rambursare anticipata
+title: Prepayment penalties and fees
 product: credite-consum
 audience: retail
 effective: 2026-01-01
 version: 2
 ---
 
-# Penalitati si comisioane - Rambursare anticipata
+# Penalties and fees - Prepayment
 
-## Comisionul de rambursare anticipata
+## The prepayment fee
 
-Conform contractelor semnate incepand cu 01.01.2026, comisionul de rambursare anticipata este de 1% din suma rambursata anticipat, indiferent daca rambursarea este partiala sau totala.
+Under contracts signed starting 01.01.2026, the prepayment fee is 1% of the prepaid amount, regardless of whether the repayment is partial or full.
 
-Exemplu concret: daca soldul ramas este 20.000 RON si clientul ramburseaza anticipat intregul sold, comisionul este 1% x 20.000 RON = 200 RON.
+Concrete example: if the remaining balance is 20,000 RON and the customer prepays the entire balance, the fee is 1% x 20,000 RON = 200 RON.
 
-## Exceptii - situatii fara comision
+## Exceptions - situations with no fee
 
-Comisionul de rambursare anticipata NU se aplica in urmatoarele situatii:
-- Creditul are dobanda variabila
-- Suma rambursata anticipat intr-o perioada de 12 luni este mai mica decat echivalentul a 3 rate lunare
+The prepayment fee does NOT apply in the following situations:
+- The loan has a variable interest rate
+- The amount prepaid within a 12-month period is less than the equivalent of 3 monthly installments
 
-## Dobanda pentru perioada ramasa
+## Interest for the remaining period
 
-Pe langa comision, clientul plateste dobanda acumulata de la ultima rata lunara pana la data efectiva a rambursarii. Aceasta suma este inclusa in oferta de rambursare.
+In addition to the fee, the customer pays the interest accrued from the last monthly installment up to the effective repayment date. This amount is included in the repayment offer.
 
-## Comparatie 2025 vs 2026
+## 2025 vs 2026 comparison
 
-Atentie: pentru contractele semnate in 2025, comisionul de rambursare anticipata era de 1.5%. Comisionul de 1% se aplica exclusiv contractelor noi din 2026.
+Note: for contracts signed in 2025, the prepayment fee was 1.5%. The 1% fee applies exclusively to new contracts from 2026.

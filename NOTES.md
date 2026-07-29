@@ -1,112 +1,112 @@
 # NOTES.md — Libra Assist RAG Project
 
-## 1. Îmbunătățiri ingestion (Partea 4)
+## 1. Ingestion improvements (Part 4)
 
-### Îmbunătățirea 1 — ID-uri stabile pentru chunk-uri
+### Improvement 1 — Stable chunk IDs
 
-**Fișier modificat:** `app/vectorstore.py`
+**File modified:** `app/vectorstore.py`
 
-**Problema:** Metoda `upsert()` genera un UUID random (`uuid.uuid4()`) pentru fiecare chunk la fiecare ingestie. Re-ingestia unui document duplica toate chunk-urile în Qdrant.
+**Problem:** The `upsert()` method generated a random UUID (`uuid.uuid4()`) for every chunk on every ingestion run. Re-ingesting a document duplicated all of its chunks in Qdrant.
 
-**Soluția:** Înlocuit cu `uuid.uuid5(uuid.NAMESPACE_DNS, f"{source}::{index}")` — un UUID determinist derivat din numele sursei și indexul chunk-ului. Același document reingestat produce aceleași ID-uri, deci Qdrant face upsert (înlocuire) în loc de insert (duplicare).
+**Solution:** Replaced it with `uuid.uuid5(uuid.NAMESPACE_DNS, f"{source}::{index}")` — a deterministic UUID derived from the source name and the chunk index. Re-ingesting the same document produces the same IDs, so Qdrant performs an upsert (replacement) instead of an insert (duplication).
 
-**Demonstrație before/after:**
-- Înainte: după 2 rulări ale loader-ului → `points_count: 208`
-- După: după 2 rulări ale loader-ului → `points_count: 104` (stabil)
+**Before/after demonstration:**
+- Before: after 2 loader runs → `points_count: 208`
+- After: after 2 loader runs → `points_count: 104` (stable)
 
 ---
 
-### Îmbunătățirea 2 — Metadata reală din headerul YAML
+### Improvement 2 — Real metadata from the YAML header
 
-**Fișier modificat:** `code/backend/scripts/ingest_corpus.py`
+**File modified:** `code/backend/scripts/ingest_corpus.py`
 
-**Problema:** Documentele aveau headere YAML cu `title`, `product`, `effective`, `version` — dar acestea nu erau extrase și stocate în Qdrant. Filtrarea după produs sau dată era imposibilă.
+**Problem:** The documents had YAML headers with `title`, `product`, `effective` and `version` — but these were never extracted and stored in Qdrant. Filtering by product or date was impossible.
 
-**Soluția:** Loader-ul parsează headerul YAML al fiecărui document și trimite metadata structurată la API. Exemplu extras pentru `04-taxe-comisioane-2026`:
+**Solution:** The loader parses each document's YAML header and sends structured metadata to the API. Example extracted for `04-fees-and-commissions-2026`:
 - `title`: Tabel taxe si comisioane credite de consum 2026
 - `product`: credite-consum
 - `effective`: 2026-01-01
 - `version`: 2
 
-Acum este posibil să filtrezi după `effective` ca să returnezi doar grila 2026, nu și pe cea din 2025.
+It is now possible to filter by `effective` so that only the 2026 fee schedule is returned, not the 2025 one as well.
 
 ---
 
-## 2. Îmbunătățiri retrieval (Partea 5)
+## 2. Retrieval improvements (Part 5)
 
-### Îmbunătățirea 1 — Score threshold (prag minim 0.5)
+### Improvement 1 — Score threshold (minimum 0.5)
 
-**Fișier modificat:** `app/main.py`
+**File modified:** `app/main.py`
 
-**Problema:** Retrieval-ul returna întotdeauna `top_k` rezultate, chiar dacă niciun chunk nu era relevant. Chunk-uri slabe (scor 0.3-0.4) ajungeau la model și produceau răspunsuri inventate cu aparentă încredere.
+**Problem:** Retrieval always returned `top_k` results, even when no chunk was relevant. Weak chunks (score 0.3–0.4) reached the model and produced confidently invented answers.
 
-**Soluția:** Chunk-urile cu scor sub 0.5 sunt eliminate înainte de a fi trimise modelului. Dacă nu rămâne niciun chunk, modelul primește context gol și refuză corect.
+**Solution:** Chunks scoring below 0.5 are dropped before being sent to the model. If no chunk survives, the model receives an empty context and correctly refuses.
 
-**Demonstrație:** Întrebarea C2 ("programul sucursalei din Cluj-Napoca") a returnat chunk-uri cu scoruri 0.68 și 0.61 — ambele peste threshold, dar irelevante. Un threshold mai strict (ex: 0.70) ar fi eliminat aceste chunk-uri și forțat un refuz corect. Aceasta rămâne o îmbunătățire de făcut.
-
----
-
-### Îmbunătățirea 2 — Deduplicare per document sursă
-
-**Fișier modificat:** `app/main.py`
-
-**Problema:** Din același document puteau fi returnate mai multe chunk-uri, ocupând inutil contextul și ascunzând informații din alte documente. Exemplu: din `09-calcul-rambursare-ipotecar` veneau 2 chunk-uri cu scoruri 0.81 și 0.77 pentru aceeași întrebare.
-
-**Soluția:** Funcția `_apply_retrieval_improvements()` păstrează doar cel mai bun chunk per sursă. Rezultatul: context mai divers, răspunsuri mai complete.
-
-**Demonstrație before/after (întrebarea: "Care este comisionul de rambursare anticipata?"):**
-- Înainte: 4 chunk-uri retrieved, 2 din același document (`09-calcul-rambursare-ipotecar`)
-- După: 1 chunk retrieved, cel mai relevant, fără duplicate
+**Demonstration:** Question C2 ("opening hours of the Cluj-Napoca branch") returned chunks with scores 0.68 and 0.61 — both above the threshold, but irrelevant. A stricter threshold (e.g. 0.70) would have removed these chunks and forced a correct refusal. This is still an open improvement.
 
 ---
 
-## 3. Rezultatele la cele 15 întrebări
+### Improvement 2 — Deduplication per source document
 
-### Grup A — Simple retrieval
+**File modified:** `app/main.py`
 
-| # | Întrebare | Răspuns așteptat | Răspuns agent | Rezultat |
+**Problem:** Several chunks could be returned from the same document, wasting context and hiding information from other documents. Example: `09-mortgage-prepayment-calculation` returned 2 chunks with scores 0.81 and 0.77 for the same question.
+
+**Solution:** The `_apply_retrieval_improvements()` function keeps only the best-scoring chunk per source. The result: a more diverse context and more complete answers.
+
+**Before/after demonstration (question: "Care este comisionul de rambursare anticipata?"):**
+- Before: 4 chunks retrieved, 2 of them from the same document (`09-mortgage-prepayment-calculation`)
+- After: 1 chunk retrieved, the most relevant one, no duplicates
+
+---
+
+## 3. Results on the 15 questions
+
+### Group A — Simple retrieval
+
+| # | Question | Expected answer | Agent answer | Result |
 |---|---|---|---|---|
-| A1 | Suma maximă credit consum | 100.000 RON | Nu găsește suma — chunk a tăiat înainte de secțiunea Caracteristici | ❌ greșit |
-| A2 | Venit minim credit consum | 1.500 RON | "Minimum net monthly income: 1.500 RON" | ✅ corect |
-| A3 | Comision rambursare 2025 | 1.5% | "1.5% of the prepaid amount for contracts signed in 2025" | ✅ corect |
-| A4 | Comision rambursare 2026 | 1% | A zis 1% dar s-a încurcat cu 0.5% din ipotecar, a cerut clarificări | ⚠️ parțial |
-| A5 | Zile notificare rambursare | 5 zile lucratoare | "At least 5 working days before" | ✅ corect |
-| A6 | Perioada grație card | 55 zile | Nu găsește — chunk s-a oprit înainte de secțiunea Perioada de grație | ❌ greșit |
-| A7 | Limită temporară card 2026 | 10.000 RON | Nu găsește — chunk s-a oprit înainte de cifra 10.000 RON | ❌ greșit |
+| A1 | Maximum consumer loan amount | 100,000 RON | Does not find the amount — the chunk was cut off before the Features section | ❌ wrong |
+| A2 | Minimum income for a consumer loan | 1,500 RON | "Minimum net monthly income: 1.500 RON" | ✅ correct |
+| A3 | Prepayment fee 2025 | 1.5% | "1.5% of the prepaid amount for contracts signed in 2025" | ✅ correct |
+| A4 | Prepayment fee 2026 | 1% | Said 1% but mixed it up with the 0.5% mortgage fee and asked for clarification | ⚠️ partial |
+| A5 | Prepayment notice period | 5 working days | "At least 5 working days before" | ✅ correct |
+| A6 | Credit card grace period | 55 days | Does not find it — the chunk stopped before the Grace period section | ❌ wrong |
+| A7 | Temporary card limit 2026 | 10,000 RON | Does not find it — the chunk stopped before the 10,000 RON figure | ❌ wrong |
 
-**Scor grup A: 3/7 corecte**
+**Group A score: 3/7 correct**
 
 ---
 
-### Grup B — Multi-step
+### Group B — Multi-step
 
-| # | Întrebare | Răspuns așteptat | Răspuns agent | Rezultat |
+| # | Question | Expected answer | Agent answer | Result |
 |---|---|---|---|---|
-| B1 | Cost rambursare ipotecar perioada fixă | 250 RON comision + dobândă | 0.5% x 50.000 = 250 RON + dobândă acumulată | ✅ corect |
-| B2 | Cost rambursare ipotecar perioada variabilă | 0 RON comision + dobândă | Comision 0 RON, doar dobândă acumulată | ✅ corect |
-| B3 | Eligibilitate ipotecar vârstă 62 ani pe 5 ani | NU (62+5=67 > 65 ani limită) | NU — vârsta la scadență depășește limita de 65 ani | ✅ corect |
-| B4 | Diferență comision 2025 vs 2026 | 1.5% vs 1%, diferență 0.5pp | 1.5% în 2025 față de 1% în 2026 | ✅ corect |
-| B5 | Penalități card 45 zile întârziere | ~210 RON | Nu a calculat suma exactă, a descris formula fără rezultat numeric | ⚠️ parțial |
+| B1 | Cost of mortgage prepayment during the fixed-rate period | 250 RON fee + interest | 0.5% x 50,000 = 250 RON + accrued interest | ✅ correct |
+| B2 | Cost of mortgage prepayment during the variable-rate period | 0 RON fee + interest | 0 RON fee, only accrued interest | ✅ correct |
+| B3 | Mortgage eligibility at age 62 over a 5-year term | NO (62+5=67 > 65-year limit) | NO — age at maturity exceeds the 65-year limit | ✅ correct |
+| B4 | Difference between the 2025 and 2026 fee | 1.5% vs 1%, a 0.5pp difference | 1.5% in 2025 versus 1% in 2026 | ✅ correct |
+| B5 | Card penalties for 45 days of delay | ~210 RON | Did not compute the exact amount, described the formula without a numeric result | ⚠️ partial |
 
-**Scor grup B: 4/5 corecte**
+**Group B score: 4/5 correct**
 
 ---
 
-### Grup C — Must refuse
+### Group C — Must refuse
 
-| # | Întrebare | Răspuns așteptat | Răspuns agent | Rezultat |
+| # | Question | Expected answer | Agent answer | Result |
 |---|---|---|---|---|
-| C1 | Credite studenți | REFUZ | "Libra Bank does not offer dedicated student loans" | ✅ refuzat corect |
-| C2 | Program sucursală Cluj-Napoca | REFUZ | A inventat "Monday–Friday 09:00–17:00" preluând orarul din documentul de reclamații | ❌ EȘEC — hallucination |
-| C3 | Credite IMM | REFUZ | "No, Libra Bank serves exclusively natural persons" | ✅ refuzat corect |
+| C1 | Student loans | REFUSE | "Libra Bank does not offer dedicated student loans" | ✅ correctly refused |
+| C2 | Cluj-Napoca branch opening hours | REFUSE | Invented "Monday–Friday 09:00–17:00", taking the schedule from the complaints document | ❌ FAILURE — hallucination |
+| C3 | SME loans | REFUSE | "No, Libra Bank serves exclusively natural persons" | ✅ correctly refused |
 
-**Scor grup C: 2/3 corecte**
+**Group C score: 2/3 correct**
 
 ---
 
-## 4. Scor total
+## 4. Total score
 
-| Grup | Scor |
+| Group | Score |
 |---|---|
 | A — Simple retrieval | 3/7 |
 | B — Multi-step | 4/5 |
@@ -115,22 +115,22 @@ Acum este posibil să filtrezi după `effective` ca să returnezi doar grila 202
 
 ---
 
-## 5. Ce este încă greșit și ce aș face în continuare
+## 5. What is still wrong and what I would do next
 
-### Problema principală: chunking taie informațiile la mijloc
+### Main problem: chunking cuts information in half
 
-Cel mai mare număr de eșecuri (A1, A6, A7) vine din faptul că chunking-ul dinamic taie documentele exact înainte de secțiunile cu informații numerice. Chunk-ul 0 din fiecare document conține headerul YAML + introducerea, iar secțiunea "Caracteristici principale" cu sumele și procentele ajunge în chunk-ul următor care nu e recuperat.
+The largest group of failures (A1, A6, A7) comes from dynamic chunking cutting documents right before the sections that hold the numeric information. Chunk 0 of every document contains the YAML header plus the introduction, while the "Caracteristici principale" section with the amounts and percentages ends up in the next chunk, which is not retrieved.
 
-**Ce aș face:** Implementa chunking bazat pe headere Markdown (Îmbunătățirea 3 din Partea 4) — fiecare secțiune `##` ar deveni un chunk separat, păstrând titlul secțiunii cu conținutul ei.
+**What I would do:** Implement Markdown-header-based chunking (Improvement 3 from Part 4) — each `##` section would become its own chunk, keeping the section title together with its content.
 
-### Problema C2: hallucination la întrebări fără răspuns în corpus
+### Problem C2: hallucination on questions with no answer in the corpus
 
-Agentul a inventat programul sucursalei din Cluj-Napoca preluând informații dintr-un context irelevant (documentul de reclamații menționează orarul ghișeului pentru depunerea reclamațiilor).
+The agent invented the Cluj-Napoca branch opening hours by picking up information from an irrelevant context (the complaints document mentions the counter's opening hours for submitting complaints).
 
-**Ce aș face:** Crește threshold-ul de la 0.5 la 0.70 și adăuga instrucțiuni explicite în persona că informațiile despre sucursale specifice nu sunt în corpus.
+**What I would do:** Raise the threshold from 0.5 to 0.70 and add explicit instructions to the persona stating that information about specific branches is not in the corpus.
 
-### Problema A4: confuzie între produse
+### Problem A4: confusion between products
 
-Comisionul de 0.5% (ipotecar perioada fixă) și 1% (consum 2026) sunt ambele în corpus și retrieval-ul le aduce pe amândouă, creând confuzie.
+The 0.5% fee (mortgage, fixed-rate period) and the 1% fee (consumer loan, 2026) are both in the corpus and retrieval brings back both, which creates confusion.
 
-**Ce aș face:** Implementa filtre de metadata pe `product` — când întrebarea e despre credite de consum, să caute doar în chunk-urile cu `product=credite-consum`.
+**What I would do:** Implement metadata filters on `product` — when the question is about consumer loans, search only in chunks with `product=credite-consum`.

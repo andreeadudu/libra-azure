@@ -1,47 +1,47 @@
 ---
-title: Procedura de depunere si solutionare reclamatii
+title: Procedure for filing and resolving complaints
 product: general
 audience: retail
 effective: 2026-01-01
 version: 5
 ---
 
-# Procedura de depunere si solutionare reclamatii
+# Procedure for filing and resolving complaints
 
-## Pasul 1: Pregatirea reclamatiei
+## Step 1: Preparing the complaint
 
-Clientul aduna:
-- Numarul de contract sau de cont afectat
-- Data si descrierea evenimentului reclamat
-- Sumele implicate
-- Documentele justificative
+The customer gathers:
+- The affected contract or account number
+- The date and description of the reported event
+- The amounts involved
+- Supporting documents
 
-## Pasul 2: Alegerea canalului de depunere
+## Step 2: Choosing a filing channel
 
-- La ghiseu: orice sucursala Libra Bank, L-V 09:00-17:00
+- At the counter: any Libra Bank branch, Mon-Fri 09:00-17:00
 - Online: www.librabank.ro/reclamatii
 - Email: reclamatii@librabank.ro
-- Posta: Libra Bank SA, Str. Exemplu nr. 1, Bucuresti
-- Telefon: 0800 123 456 (linie gratuita, L-V 08:00-20:00)
+- Mail: Libra Bank SA, Str. Exemplu nr. 1, Bucharest
+- Phone: 0800 123 456 (toll-free line, Mon-Fri 08:00-20:00)
 
-## Pasul 3: Primirea confirmarii
+## Step 3: Receiving confirmation
 
-In maximum 1 zi lucratoare, banca transmite o confirmare cu un numar unic de inregistrare.
+Within a maximum of 1 working day, the bank sends a confirmation with a unique registration number.
 
-## Pasul 4: Analiza reclamatiei
+## Step 4: Analyzing the complaint
 
-Termenul de solutionare este de maximum 30 de zile calendaristice. Pentru cazuri complexe, termenul poate fi prelungit cu 15 zile, cu notificarea clientului.
+The resolution deadline is a maximum of 30 calendar days. For complex cases, the deadline can be extended by 15 days, with notice to the customer.
 
-## Pasul 5: Comunicarea raspunsului
+## Step 5: Communicating the response
 
-Raspunsul contine:
-- Concluzia analizei
-- Masurile luate sau motivele respingerii
-- Informatii despre caile de atac disponibile
+The response contains:
+- The conclusion of the analysis
+- The measures taken or the reasons for rejection
+- Information about the available appeal channels
 
-## Pasul 6: Cai de atac
+## Step 6: Appeal channels
 
 - SAL-Fin: www.salfin.ro
-- Autoritatea Nationala pentru Protectia Consumatorilor (ANPC)
-- Banca Nationala a Romaniei
-- Instantele judecatoresti competente
+- The National Authority for Consumer Protection (ANPC)
+- The National Bank of Romania
+- The competent courts

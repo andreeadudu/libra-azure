@@ -1,33 +1,33 @@
 ---
-title: Ghid general credit ipotecar
+title: General guide to mortgage loans
 product: credit-ipotecar
 audience: retail
 effective: 2026-01-01
 version: 3
 ---
 
-# Ghid general - Credit ipotecar Libra Bank
+# General guide - Libra Bank mortgage loan
 
-Creditul ipotecar Libra Bank este destinat achizitiei, constructiei sau renovarii unei proprietati imobiliare rezidentiale situate in Romania.
+The Libra Bank mortgage loan is intended for the purchase, construction, or renovation of a residential property located in Romania.
 
-## Caracteristici principale
+## Main features
 
-- Suma minima: 50.000 RON
-- Suma maxima: 1.500.000 RON
-- Durata: intre 5 si 30 de ani
-- Moneda: RON sau EUR
-- Tipul dobanzii: fixa primii 5 ani, apoi variabila (ROBOR 3M + marja fixa)
-- Avans minim: 15% din valoarea proprietatii
+- Minimum amount: 50,000 RON
+- Maximum amount: 1,500,000 RON
+- Term: between 5 and 30 years
+- Currency: RON or EUR
+- Interest type: fixed for the first 5 years, then variable (ROBOR 3M + fixed margin)
+- Minimum down payment: 15% of the property value
 
-## Garantii acceptate
+## Accepted collateral
 
-Garantia principala este ipoteca de rang I asupra proprietatii finantate.
+The primary collateral is a first-rank mortgage on the financed property.
 
-## Asigurari obligatorii
+## Mandatory insurance
 
-- Asigurare de viata a debitorului (cesionata in favoarea bancii)
-- Asigurare a proprietatii impotriva riscurilor (PAD + asigurare facultativa)
+- Life insurance on the borrower (assigned in favor of the bank)
+- Property insurance against risks (mandatory home insurance (PAD) + optional insurance)
 
-## Evaluarea proprietatii
+## Property valuation
 
-Proprietatea trebuie evaluata de un evaluator agreat de Libra Bank. Costul evaluarii este suportat de client.
+The property must be valued by an appraiser approved by Libra Bank. The valuation cost is borne by the customer.

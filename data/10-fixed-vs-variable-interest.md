@@ -1,42 +1,42 @@
 ---
-title: Comparatie dobanzi fixe vs variabile
+title: Fixed vs variable interest rate comparison
 product: credite-consum,credit-ipotecar
 audience: retail
 effective: 2026-01-01
 version: 1
 ---
 
-# Dobanzi fixe vs variabile - Ghid comparativ
+# Fixed vs variable interest rates - Comparative guide
 
-## Dobanda fixa
+## Fixed interest rate
 
-Dobanda fixa ramane constanta pe toata durata stabilita. Rata lunara este predictibila.
+Fixed interest remains constant for the entire agreed period. The monthly installment is predictable.
 
-Avantaje:
-- Predictibilitate: stii exact cat platesti lunar
-- Protectie impotriva cresterilor de dobanda
-- Planificare financiara mai usoara
+Advantages:
+- Predictability: you know exactly how much you pay each month
+- Protection against interest rate increases
+- Easier financial planning
 
-Dezavantaje:
-- De obicei mai mare decat dobanda variabila initiala
-- Nu beneficiezi de scaderile de dobanda
-- Comision de rambursare anticipata aplicabil
+Disadvantages:
+- Usually higher than the initial variable rate
+- You don't benefit from interest rate decreases
+- A prepayment fee applies
 
-## Dobanda variabila
+## Variable interest rate
 
-Se modifica periodic in functie de ROBOR 3M (pentru RON) sau EURIBOR 3M (pentru EUR) plus o marja fixa.
+It changes periodically based on ROBOR 3M (for RON) or EURIBOR 3M (for EUR) plus a fixed margin.
 
-Avantaje:
-- De obicei mai mica la momentul contractarii
-- Beneficiezi de scaderile indicelui de referinta
-- Fara comision de rambursare anticipata
+Advantages:
+- Usually lower at the time of contracting
+- You benefit from decreases in the reference index
+- No prepayment fee
 
-Dezavantaje:
-- Rata lunara poate creste
-- Impredictibilitate pe termen lung
+Disadvantages:
+- The monthly installment can increase
+- Unpredictability in the long term
 
-## Situatia in 2026
+## The situation in 2026
 
-- ROBOR 3M (ianuarie 2026): 5.85% pe an
-- Marja fixa Libra Bank pentru ipotecar RON: 2.5%
-- Dobanda variabila rezultata: 8.35% pe an
+- ROBOR 3M (January 2026): 5.85% per year
+- Libra Bank's fixed margin for RON mortgages: 2.5%
+- Resulting variable interest rate: 8.35% per year

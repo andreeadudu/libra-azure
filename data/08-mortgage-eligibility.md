@@ -1,34 +1,34 @@
 ---
-title: Conditii de eligibilitate credit ipotecar
+title: Mortgage loan eligibility conditions
 product: credit-ipotecar
 audience: retail
 effective: 2026-01-01
 version: 2
 ---
 
-# Conditii de eligibilitate - Credit ipotecar
+# Eligibility conditions - Mortgage loan
 
-## Conditii personale
+## Personal conditions
 
-- Varsta minima: 21 ani la data acordarii
-- Varsta maxima: 65 ani la data scadentei finale
-- Rezidenta in Romania
-- Co-debitor acceptat
+- Minimum age: 21 at the date the loan is granted
+- Maximum age: 65 at the final maturity date
+- Residency in Romania
+- Co-borrower accepted
 
-## Conditii financiare
+## Financial conditions
 
-- Venit net lunar minim: 3.000 RON pentru debitor singular
-- Rata lunara totala nu poate depasi 40% din venitul net lunar
-- Vechime minima la angajator: 6 luni pentru contract nedeterminat, 12 luni pentru PFA
-- Fara restante in Biroul de Credit in ultimii 3 ani
+- Minimum net monthly income: 3,000 RON for a sole borrower
+- The total monthly installment cannot exceed 40% of net monthly income
+- Minimum tenure with employer: 6 months for an open-ended contract, 12 months for a sole trader (PFA)
+- No arrears at the Credit Bureau in the last 3 years
 
-## Conditii privind proprietatea
+## Conditions regarding the property
 
-- Situata in Romania
-- Destinatie rezidentiala
-- Libera de sarcini
-- LTV maxim 85% (avans minim 15%)
+- Located in Romania
+- Residential purpose
+- Free of encumbrances
+- Maximum LTV of 85% (minimum down payment of 15%)
 
-## Ce inseamna LTV?
+## What does LTV mean?
 
-LTV (Loan-to-Value) reprezinta raportul dintre suma creditului si valoarea proprietatii evaluate. La Libra Bank, LTV maxim este 85%.
+LTV (Loan-to-Value) represents the ratio between the loan amount and the value of the appraised property. At Libra Bank, the maximum LTV is 85%.

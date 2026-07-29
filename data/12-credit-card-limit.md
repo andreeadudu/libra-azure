@@ -1,27 +1,27 @@
 ---
-title: Modificarea limitei cardului de credit
+title: Changing the credit card limit
 product: card-credit
 audience: retail
 effective: 2026-01-15
 version: 3
 ---
 
-# Modificarea limitei cardului de credit
+# Changing the credit card limit
 
-## Modificare permanenta a limitei
+## Permanent limit change
 
-Presupune o noua analiza de bonitate. Clientul depune cerere si documente de venit actualizate. Procesul dureaza 3-5 zile lucratoare.
+Requires a new creditworthiness assessment. The customer submits a request and updated income documents. The process takes 3-5 working days.
 
-## Modificare temporara a limitei
+## Temporary limit change
 
-Disponibila pentru clientii cu istoric pozitiv de minimum 12 luni. Limita temporara se acorda pentru maximum 90 de zile si poate fi solicitata prin aplicatia Libra Mobile fara documente suplimentare.
+Available to customers with a positive history of at least 12 months. A temporary limit is granted for a maximum of 90 days and can be requested through the Libra Mobile app with no additional documents.
 
-## Limita maxima temporara
+## Maximum temporary limit
 
-Incepand cu 15 ianuarie 2026, limita maxima pentru majorarea temporara a fost crescuta de la 5.000 RON la 10.000 RON, pentru clientii cu scor intern de credit peste 750 de puncte.
+Starting 15 January 2026, the maximum limit for a temporary increase has been raised from 5,000 RON to 10,000 RON, for customers with an internal credit score above 750 points.
 
-Atentie: pana la 14 ianuarie 2026, limita maxima temporara era de 5.000 RON. Clientii cu contracte anterioare acestei date beneficiaza automat de noua limita de 10.000 RON fara o noua cerere.
+Note: until 14 January 2026, the maximum temporary limit was 5,000 RON. Customers with contracts predating this date automatically benefit from the new 10,000 RON limit without a new request.
 
-## Reducerea limitei
+## Reducing the limit
 
-Clientul poate solicita reducerea limitei oricand, fara costuri, prin aplicatia Libra Mobile sau cerere la ghiseu. Banca poate reduce limita din proprie initiativa cu notificare de 30 de zile.
+The customer can request a limit reduction at any time, free of charge, through the Libra Mobile app or a request at the branch counter. The bank can reduce the limit on its own initiative with 30 days' notice.

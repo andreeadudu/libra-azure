@@ -1,41 +1,41 @@
 ---
-title: Ghid general credite de consum
+title: General guide to consumer loans
 product: credite-consum
 audience: retail
 effective: 2026-01-01
 version: 2
 ---
 
-# Ghid general - Credite de consum
+# General guide - Consumer loans
 
-Libra Bank ofera credite de consum persoanelor fizice cu varsta intre 18 si 70 de ani, rezidente in Romania, cu venituri stabile si dovedite.
+Libra Bank offers consumer loans to individuals aged between 18 and 70, resident in Romania, with stable and provable income.
 
-## Ce este un credit de consum?
+## What is a consumer loan?
 
-Un credit de consum este un imprumut acordat pentru nevoi personale: achizitii de bunuri, renovari, vacante, cheltuieli medicale sau orice alta destinatie neprofesionala. Suma imprumutata se restituie in rate lunare egale pe durata convenita.
+A consumer loan is a loan granted for personal needs: purchasing goods, renovations, holidays, medical expenses, or any other non-professional purpose. The borrowed amount is repaid in equal monthly installments over the agreed term.
 
-## Caracteristici principale
+## Main features
 
-- Suma minima: 1.000 RON
-- Suma maxima: 100.000 RON
-- Durata minima: 6 luni
-- Durata maxima: 60 de luni
-- Moneda: RON
-- Tipul dobanzii: fixa pe toata durata contractului
+- Minimum amount: 1,000 RON
+- Maximum amount: 100,000 RON
+- Minimum term: 6 months
+- Maximum term: 60 months
+- Currency: RON
+- Interest type: fixed for the entire duration of the contract
 
-## Dobanda anuala efectiva (DAE)
+## Annual Percentage Rate (APR)
 
-DAE include dobanda nominala si toate comisioanele obligatorii:
-- Clienti cu scor excelent: DAE intre 8% si 12%
-- Clienti cu scor bun: DAE intre 12% si 18%
-- Clienti cu scor standard: DAE intre 18% si 24%
+The APR includes the nominal interest rate and all mandatory fees:
+- Customers with an excellent score: APR between 8% and 12%
+- Customers with a good score: APR between 12% and 18%
+- Customers with a standard score: APR between 18% and 24%
 
-## Cum se acorda creditul?
+## How is the loan granted?
 
-Creditul se acorda exclusiv in contul curent al clientului deschis la Libra Bank. Daca clientul nu are cont curent, deschiderea acestuia este obligatorie inainte de acordarea creditului.
+The loan is granted exclusively into the customer's current account opened at Libra Bank. If the customer does not have a current account, opening one is mandatory before the loan is granted.
 
-## Unde poti aplica?
+## Where can you apply?
 
-- Orice sucursala Libra Bank din Romania
-- Aplicatia mobila Libra Mobile
-- Prin partenerul de vanzari autorizat
+- Any Libra Bank branch in Romania
+- The Libra Mobile app
+- Through an authorized sales partner

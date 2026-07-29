@@ -1,35 +1,35 @@
 ---
-title: Calculul costului rambursarii anticipate - Credit ipotecar
+title: Calculating the cost of mortgage prepayment
 product: credit-ipotecar
 audience: retail
 effective: 2026-01-01
 version: 2
 ---
 
-# Calculul costului rambursarii anticipate - Credit ipotecar
+# Calculating the cost of prepayment - Mortgage loan
 
-## Perioada cu dobanda fixa (primii 5 ani)
+## Fixed-rate period (first 5 years)
 
-Comisionul de rambursare anticipata este de 0.5% din suma rambursata anticipat.
+The prepayment fee is 0.5% of the prepaid amount.
 
-Exemplu: sold ramas 200.000 RON, rambursare anticipata 50.000 RON in perioada fixa:
-- Comision = 0.5% x 50.000 = 250 RON
-- Plus dobanda acumulata de la ultima rata pana la data rambursarii
+Example: remaining balance of 200,000 RON, prepayment of 50,000 RON during the fixed-rate period:
+- Fee = 0.5% x 50,000 = 250 RON
+- Plus interest accrued from the last installment up to the repayment date
 
-## Perioada cu dobanda variabila (dupa 5 ani)
+## Variable-rate period (after 5 years)
 
-Conform legislatiei, comisionul de rambursare anticipata este 0 RON.
+Under the law, the prepayment fee is 0 RON.
 
-Exemplu: sold ramas 150.000 RON, rambursare anticipata totala in perioada variabila:
-- Comision = 0 RON
-- Se plateste doar dobanda acumulata pana la data rambursarii
+Example: remaining balance of 150,000 RON, full prepayment during the variable-rate period:
+- Fee = 0 RON
+- Only the interest accrued up to the repayment date is paid
 
-## Cum se calculeaza dobanda acumulata?
+## How is accrued interest calculated?
 
-Dobanda zilnica = (Sold ramas x Dobanda anuala nominala) / 365
+Daily interest = (Remaining balance x Nominal annual interest rate) / 365
 
-Aceasta se inmulteste cu numarul de zile de la ultima rata platita pana la data rambursarii.
+This is multiplied by the number of days from the last installment paid to the repayment date.
 
-## Nota importanta
+## Important note
 
-Pentru suma exacta, clientul solicita o oferta de rambursare conform procedurii standard. Oferta este valabila 5 zile lucratoare.
+For the exact amount, the customer must request a repayment offer following the standard procedure. The offer is valid for 5 working days.

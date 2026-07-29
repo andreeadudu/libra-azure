@@ -1,29 +1,29 @@
 ---
-title: Produse nedisponibile la Libra Bank
+title: Products not available at Libra Bank
 product: general
 audience: retail
 effective: 2026-01-01
 version: 1
 ---
 
-# Produse nedisponibile la Libra Bank
+# Products not available at Libra Bank
 
-## Credite pentru studenti
+## Student loans
 
-Libra Bank nu ofera credite studentesti sau produse de finantare dedicate exclusiv studentilor. Studentii cu venituri dovedite pot aplica pentru un credit de consum standard daca indeplinesc conditiile generale.
+Libra Bank does not offer student loans or financing products dedicated exclusively to students. Students with provable income can apply for a standard consumer loan if they meet the general conditions.
 
-## Credite pentru firme
+## Business loans
 
-Libra Bank deserveste exclusiv persoanele fizice. Nu se acorda credite pentru persoane juridice, PFA-uri sau alte forme profesionale.
+Libra Bank serves exclusively individuals. No loans are granted to legal entities, sole traders (PFA), or other professional forms.
 
-## Credite auto dedicate
+## Dedicated auto loans
 
-Libra Bank nu are un produs de credit auto cu garantie pe vehicul. Clientii pot folosi un credit de consum standard pentru achizitia unui autovehicul.
+Libra Bank does not have an auto loan product secured against the vehicle. Customers can use a standard consumer loan to purchase a vehicle.
 
-## Factoring si leasing
+## Factoring and leasing
 
-Libra Bank nu ofera servicii de factoring sau leasing financiar.
+Libra Bank does not offer factoring or financial leasing services.
 
-## Conturi si credite in criptomonede
+## Cryptocurrency accounts and loans
 
-Libra Bank nu ofera niciun produs denominat in criptomonede.
+Libra Bank does not offer any product denominated in cryptocurrencies.

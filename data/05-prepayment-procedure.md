@@ -1,57 +1,57 @@
 ---
-title: Procedura de rambursare anticipata credit de consum
+title: Consumer loan prepayment procedure
 product: credite-consum
 audience: retail
 effective: 2026-01-01
 version: 2
 ---
 
-# Procedura de rambursare anticipata - Credit de consum
+# Prepayment procedure - Consumer loan
 
-## Pasul 1: Notificarea bancii
+## Step 1: Notifying the bank
 
-Clientul notifica Libra Bank cu cel putin 5 zile lucratoare inainte de data dorita. Notificarea se face prin:
-- Cerere scrisa depusa la orice sucursala Libra Bank
-- Mesaj securizat prin aplicatia Libra Mobile
-- Email la credite@librabank.ro cu subiectul: RAMBURSARE ANTICIPATA + numarul contractului
+The customer notifies Libra Bank at least 5 working days before the desired date. Notification is done through:
+- A written request submitted at any Libra Bank branch
+- A secure message through the Libra Mobile app
+- Email to credite@librabank.ro with the subject: EARLY REPAYMENT + contract number
 
-## Pasul 2: Primirea ofertei de rambursare
+## Step 2: Receiving the repayment offer
 
-In maximum 2 zile lucratoare, banca transmite o oferta scrisa cu:
-- Soldul ramas la data rambursarii
-- Comisionul de rambursare anticipata aplicabil
-- Dobanda acumulata pana la data rambursarii
-- Suma totala de plata
-- Contul in care trebuie efectuata plata
-- Termenul de valabilitate al ofertei: 5 zile lucratoare
+Within a maximum of 2 working days, the bank sends a written offer with:
+- The remaining balance at the repayment date
+- The applicable prepayment fee
+- Interest accrued up to the repayment date
+- The total amount payable
+- The account into which payment must be made
+- The offer's validity period: 5 working days
 
-## Pasul 3: Confirmarea acceptarii ofertei
+## Step 3: Confirming acceptance of the offer
 
-Clientul confirma acceptarea prin:
-- Semnatura pe oferta la ghiseu
-- Confirmare prin aplicatia Libra Mobile
-- Raspuns email la oferta primita
+The customer confirms acceptance by:
+- Signing the offer at the branch counter
+- Confirming through the Libra Mobile app
+- Replying by email to the received offer
 
-## Pasul 4: Efectuarea platii
+## Step 4: Making the payment
 
-Clientul efectueaza plata sumei totale din oferta in contul indicat, prin:
-- Ordin de plata la ghiseu
-- Transfer bancar din aplicatia Libra Mobile
-- Transfer interbancar din alta banca
+The customer pays the total amount from the offer into the indicated account, via:
+- A payment order at the branch counter
+- A bank transfer from the Libra Mobile app
+- An interbank transfer from another bank
 
-## Pasul 5: Confirmarea rambursarii
+## Step 5: Confirming the repayment
 
-In maximum 1 zi lucratoare de la primirea platii, banca:
-- Inchide creditul in sistem (pentru rambursare totala)
-- Recalculeaza noul grafic de rambursare (pentru rambursare partiala)
-- Emite o adeverinta de rambursare / inchidere credit
+Within a maximum of 1 working day of receiving the payment, the bank:
+- Closes the loan in the system (for full repayment)
+- Recalculates the new repayment schedule (for partial repayment)
+- Issues a repayment / loan closure certificate
 
-## Pasul 6: Ridicarea documentelor
+## Step 6: Collecting the documents
 
-Pentru rambursare totala, clientul primeste:
-- Adeverinta de inchidere credit
-- Originalul contractului de credit
+For full repayment, the customer receives:
+- A loan closure certificate
+- The original loan contract
 
-## Atentie
+## Note
 
-Daca plata nu este efectuata in termenul de valabilitate al ofertei, procedura se reia de la Pasul 1.
+If payment is not made within the offer's validity period, the procedure restarts from Step 1.

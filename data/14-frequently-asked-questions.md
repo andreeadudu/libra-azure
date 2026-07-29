@@ -1,38 +1,38 @@
 ---
-title: Intrebari frecvente despre credite
+title: Frequently asked questions about loans
 product: credite-consum,credit-ipotecar,card-credit
 audience: retail
 effective: 2026-01-01
 version: 2
 ---
 
-# Intrebari frecvente - Credite Libra Bank
+# Frequently asked questions - Libra Bank loans
 
-## Pot sa am doua credite de consum simultan?
+## Can I have two consumer loans at the same time?
 
-Da, Libra Bank permite maximum doua credite de consum active simultan, cu conditia ca rata lunara totala sa nu depaseasca 40% din venitul net lunar.
+Yes, Libra Bank allows a maximum of two active consumer loans at the same time, provided the total monthly installment does not exceed 40% of net monthly income.
 
-## Cat dureaza aprobarea unui credit de consum?
+## How long does approval of a consumer loan take?
 
-- Clienti existenti: decizie in maximum 24 de ore lucratoare
-- Clienti noi: maximum 3 zile lucratoare de la depunerea dosarului complet
+- Existing customers: a decision within a maximum of 24 working hours
+- New customers: a maximum of 3 working days from submission of the complete file
 
-## Pot rambursa anticipat oricand?
+## Can I prepay at any time?
 
-Da, oricand, cu notificare prealabila de 5 zile lucratoare. Comisionul pentru contractele din 2026 este de 1%.
+Yes, at any time, with 5 working days' prior notice. The fee for 2026 contracts is 1%.
 
-## Ce se intampla daca nu platesc rata la timp?
+## What happens if I don't pay my installment on time?
 
-De la prima zi: penalitati de 0.08% pe zi din rata restanta. Dupa 30 zile: raportare la Biroul de Credit. Dupa 90 zile: banca poate declara scadenta anticipata.
+From the first day: a penalty of 0.08% per day of the overdue installment. After 30 days: reporting to the Credit Bureau. After 90 days: the bank may declare early maturity.
 
-## Pot lua un credit daca sunt pe lista Biroului de Credit?
+## Can I take out a loan if I'm on the Credit Bureau's list?
 
-Depinde de tipul si vechimea informatiei. Restantele stinse de peste 4 ani nu mai influenteaza decizia. Restantele active duc la respingerea automata.
+It depends on the type and age of the information. Arrears cleared more than 4 years ago no longer affect the decision. Active arrears lead to automatic rejection.
 
-## Ofera Libra Bank credite in valuta?
+## Does Libra Bank offer loans in foreign currency?
 
-Creditele ipotecare se acorda in EUR si RON. Creditele de consum se acorda exclusiv in RON.
+Mortgage loans are granted in EUR and RON. Consumer loans are granted exclusively in RON.
 
-## Ce este DAE?
+## What is the APR?
 
-DAE (Dobanda Anuala Efectiva) reprezinta costul total al creditului exprimat ca procent anual. Include dobanda nominala, comisionul de acordare si comisionul de administrare.
+The APR (Annual Percentage Rate) represents the total cost of the loan expressed as an annual percentage. It includes the nominal interest rate, the origination fee, and the administration fee.

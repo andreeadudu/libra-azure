@@ -1,39 +1,39 @@
 ---
-title: Ghid card de credit Libra Bank
+title: Libra Bank credit card guide
 product: card-credit
 audience: retail
 effective: 2026-01-01
 version: 4
 ---
 
-# Ghid card de credit - Libra Bank
+# Credit card guide - Libra Bank
 
-## Ce este cardul de credit?
+## What is the credit card?
 
-Cardul de credit Libra Bank pune la dispozitie o linie de credit revolving pentru cumparaturi, plati online sau retrageri de numerar, pana la limita aprobata.
+The Libra Bank credit card provides a revolving credit line for purchases, online payments, or cash withdrawals, up to the approved limit.
 
-## Limite disponibile
+## Available limits
 
-- Limita minima: 500 RON
-- Limita maxima: 30.000 RON
+- Minimum limit: 500 RON
+- Maximum limit: 30,000 RON
 
-## Perioada de gratie
+## Grace period
 
-55 de zile fara dobanda pentru cumparaturi, cu conditia achitarii integrale a soldului la scadenta.
+55 interest-free days for purchases, provided the balance is paid in full by the due date.
 
-## Dobanda
+## Interest
 
-- Dobanda pentru cumparaturi (dupa perioada de gratie): 24% pe an
-- Dobanda pentru retrageri de numerar: 30% pe an (fara perioada de gratie)
+- Interest on purchases (after the grace period): 24% per year
+- Interest on cash withdrawals: 30% per year (no grace period)
 
-## Comisioane principale
+## Main fees
 
-- Comision anual card: 50 RON
-- Comision retragere numerar: 1% din suma, minim 10 RON
-- Comision interogare sold la ATM strain: 2 RON
+- Annual card fee: 50 RON
+- Cash withdrawal fee: 1% of the amount, minimum 10 RON
+- Balance inquiry fee at a foreign ATM: 2 RON
 
-## Cum activezi cardul?
+## How do you activate the card?
 
-1. Prima retragere la ATM Libra Bank cu PIN-ul primit separat
-2. Prima plata la POS cu PIN
-3. Activare prin aplicatia Libra Mobile
+1. First withdrawal at a Libra Bank ATM with the PIN received separately
+2. First payment at a POS terminal with the PIN
+3. Activation through the Libra Mobile app

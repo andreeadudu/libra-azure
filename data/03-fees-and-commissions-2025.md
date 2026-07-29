@@ -1,36 +1,36 @@
 ---
-title: Tabel taxe si comisioane credite de consum 2025
+title: Fee and commission table for consumer loans 2025
 product: credite-consum
 audience: retail
 effective: 2025-01-01
 version: 1
 ---
 
-# Taxe si comisioane - Credite de consum (valabile in 2025)
+# Fees and commissions - Consumer loans (valid in 2025)
 
-## Comisioane la acordare
+## Origination fees
 
-| Tip comision | Valoare |
+| Fee type | Value |
 |---|---|
-| Comision de analiza dosar | 150 RON |
-| Comision de acordare | 1% din suma creditata, minim 100 RON |
-| Comision de administrare lunar | 0.15% din soldul curent |
+| File analysis fee | 150 RON |
+| Origination fee | 1% of the loan amount, minimum 100 RON |
+| Monthly administration fee | 0.15% of the current balance |
 
-## Comisioane pe parcursul creditului
+## Fees during the loan term
 
-| Tip comision | Valoare |
+| Fee type | Value |
 |---|---|
-| Comision rambursare anticipata partiala | 1.5% din suma rambursata anticipat |
-| Comision rambursare anticipata totala | 1.5% din soldul ramas |
-| Comision modificare scadenta | 50 RON per operatiune |
-| Comision extras de cont la ghiseu | 5 RON |
-| Comision duplicat contract | 30 RON |
+| Partial prepayment fee | 1.5% of the prepaid amount |
+| Full prepayment fee | 1.5% of the remaining balance |
+| Due-date change fee | 50 RON per operation |
+| In-branch account statement fee | 5 RON |
+| Duplicate contract fee | 30 RON |
 
-## Penalitati
+## Penalties
 
-| Situatie | Penalitate |
+| Situation | Penalty |
 |---|---|
-| Rata platita cu intarziere 1-30 zile | 0.1% pe zi din rata restanta |
-| Rata platita cu intarziere peste 30 zile | 0.15% pe zi din rata restanta |
+| Installment paid late, 1-30 days | 0.1% per day of the overdue installment |
+| Installment paid late, over 30 days | 0.15% per day of the overdue installment |
 
-Valabil pentru contractele semnate intre 01.01.2025 si 31.12.2025.
+Valid for contracts signed between 01.01.2025 and 31.12.2025.
