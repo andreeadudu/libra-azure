@@ -141,7 +141,11 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
             <span className="badge muted" title={foundryWhy}>hosted agents off — key auth</span>
           )}
         </div>
-        <div className="chat-top-right">
+        <div className="chat-top-right" style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <button className="btn btn-outline btn-sm" onClick={() => { if (confirm('Clear this chat?')) setMessages([]) }}
+                  title="Clear this chat">
+            clear this chat
+          </button>
           <button className="icon-btn" onClick={() => setShowOptions((v) => !v)} title="Chat options"
                   aria-expanded={showOptions}>⚙</button>
         </div>
@@ -174,7 +178,6 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
                      onChange={(e) => setTopK(e.target.value)} />
             </div>
             {current && <span className="badge muted" title={current.description}>temp {current.temperature ?? '—'}</span>}
-            <button className="btn btn-outline btn-sm" onClick={() => setMessages([])}>clear this chat</button>
           </div>
         )}
       </div>
