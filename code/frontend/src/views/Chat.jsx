@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../api'
 import { micSupported, startMicRecording } from '../audioRecorder'
-import { Err, RunsOnBadge } from '../components'
+import { Err, MicIcon, RunsOnBadge, StopIcon } from '../components'
 
 export default function Chat({ conversation, onMessagesChange, agents, hostedOnly = [], foundry }) {
   const messages = conversation.messages
@@ -289,7 +289,7 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
             <button className={`composer-mic ${recording ? 'recording' : ''}`} onClick={toggleMic}
                     disabled={busy || (transcribing && !recording)}
                     title={recording ? 'Stop and transcribe' : 'Dictate with your microphone'}>
-              {transcribing ? <span className="spin" /> : recording ? '■' : '🎤'}
+              {transcribing ? <span className="spin" /> : recording ? <StopIcon /> : <MicIcon />}
             </button>
           )}
           <textarea ref={taRef} value={question} rows={1}
