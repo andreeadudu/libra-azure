@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../api'
+import { micSupported, startMicRecording } from '../audioRecorder'
 import { Err, RunsOnBadge } from '../components'
 
 export default function Chat({ conversation, onMessagesChange, agents, hostedOnly = [], foundry }) {
@@ -16,12 +17,17 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
   const [showOptions, setShowOptions] = useState(false)
   const [copied, setCopied] = useState(null)
   const [speech, setSpeech] = useState({}) // message index -> { busy, url, error }
+  const [recording, setRecording] = useState(false)
+  const [transcribing, setTranscribing] = useState(false)
   const endRef = useRef(null)
   const taRef = useRef(null)
+  const recorderRef = useRef(null)
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, busy])
   // Blob URLs are per-conversation (Chat remounts on switch, see App.jsx's `key`) — release them on unmount.
   useEffect(() => () => { Object.values(speech).forEach((s) => s?.url && URL.revokeObjectURL(s.url)) }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // Switching conversations remounts Chat (see App.jsx's `key`) — don't leave the mic hot.
+  useEffect(() => () => recorderRef.current?.cancel?.(), [])
 
   function autoGrow(el) {
     if (!el) return
@@ -48,6 +54,33 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
       setCopied(i)
       setTimeout(() => setCopied((c) => (c === i ? null : c)), 1500)
     } catch { /* clipboard unavailable — silently ignore */ }
+  }
+
+  async function toggleMic() {
+    if (recording) {
+      setRecording(false)
+      const controller = recorderRef.current
+      recorderRef.current = null
+      if (!controller) return
+      setTranscribing(true); setError(null)
+      try {
+        const blob = controller.stop()
+        const file = new File([blob], 'dictation.wav', { type: 'audio/wav' })
+        const result = await api.transcribe(file)
+        setQuestion((q) => {
+          const next = q.trim() ? `${q.trim()} ${result.text}` : result.text
+          requestAnimationFrame(() => autoGrow(taRef.current))
+          return next
+        })
+        taRef.current?.focus()
+      } catch (e) { setError(e.message) } finally { setTranscribing(false) }
+      return
+    }
+    setError(null)
+    try {
+      recorderRef.current = await startMicRecording()
+      setRecording(true)
+    } catch (e) { setError(e.message || 'Microphone unavailable') }
   }
 
   async function send() {
@@ -252,8 +285,15 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
       <Err error={error} />
       <div className="composer-wrap">
         <div className="composer">
+          {micSupported && (
+            <button className={`composer-mic ${recording ? 'recording' : ''}`} onClick={toggleMic}
+                    disabled={busy || (transcribing && !recording)}
+                    title={recording ? 'Stop and transcribe' : 'Dictate with your microphone'}>
+              {transcribing ? <span className="spin" /> : recording ? '■' : '🎤'}
+            </button>
+          )}
           <textarea ref={taRef} value={question} rows={1}
-                    placeholder="Ask Libra Assist…  (Enter to send, Shift+Enter for a new line)"
+                    placeholder={recording ? 'Listening…' : 'Ask Libra Assist…  (Enter to send, Shift+Enter for a new line)'}
                     onChange={(e) => { setQuestion(e.target.value); autoGrow(e.target) }}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() } }} />
           <button className="composer-send" onClick={send} disabled={busy || !question.trim()} title="Send">↑</button>
