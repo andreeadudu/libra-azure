@@ -36,3 +36,24 @@ Consumer loans, mortgage loans, and credit cards of the fictional bank Libra Ban
 5. Table: fee schedule in documents 03 and 04
 6. Contradiction between versions: card limit raised from 5,000 to 10,000 RON as of Jan 2026 (12)
 7. Something intentionally absent: student loans do not exist at Libra Bank (15)
+
+## Evaluation — golden question set
+
+- `questions.md` — the 15 questions in prose (question / expected answer / source doc),
+  grouped A (simple retrieval, 7), B (multi-step, 5), C (must refuse, 3).
+- `golden_set.json` — the same 15 questions, structured for
+  `code/backend/scripts/run_golden_set.py`: each question carries the acceptable
+  phrasings its answer must contain (English and Romanian, since the agent sometimes
+  answers in Romanian even for an English question), so the score is machine-checked
+  and reproducible instead of filled in by hand.
+- `golden_set_results.json` — every run of the script, appended, not overwritten: label,
+  timestamp, per-question pass/fail and the full answer text. This is the before/after
+  record — see `NOTES.md` for the numbers and what changed in between.
+
+Run it yourself:
+
+```bash
+cd code/backend
+uv run python scripts/ingest_corpus.py         # loads the 15 docs into Qdrant
+uv run python scripts/run_golden_set.py --label "my-run" --agent default
+```

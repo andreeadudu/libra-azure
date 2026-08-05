@@ -1,0 +1,472 @@
+{
+  "runs": [
+    {
+      "label": "baseline (chunk_size=500, dynamic strategy, dedup cap=1)",
+      "timestamp": "2026-08-04T08:27:49+00:00",
+      "agent": "default",
+      "agent_mode": "local",
+      "top_k": 4,
+      "summary": {
+        "total": "13/15",
+        "by_group": {
+          "A": "6/7",
+          "B": "4/5",
+          "C": "3/3"
+        }
+      },
+      "results": [
+        {
+          "id": "A1",
+          "group": "A",
+          "question": "What is the maximum amount for a consumer loan?",
+          "expect_refusal": false,
+          "answer": "The supplied documents do not state any maximum amount for a consumer loan. Passage [2] describes what a consumer loan is and eligibility, and passage [1] covers allowed number of concurrent loans and approval times, but neither passage specifies a maximum loan amount [1][2].\n\nWhat is missing is an explicit maximum loan amount (or the product sheet/credit policy that defines borrower-specific limits). Please provide the consumer‑loan product sheet or ask a branch/relationship manager for the current maximum amount and any income- or credit‑score–based limits.",
+          "passed": false,
+          "missing": [
+            "100,000 / 100.000 / 100000"
+          ]
+        },
+        {
+          "id": "A2",
+          "group": "A",
+          "question": "What is the minimum net monthly income for a consumer loan?",
+          "expect_refusal": false,
+          "answer": "The minimum net monthly income required is 1,500 RON (from accepted sources) [1].\n\nIf you need details on which income sources are accepted or what documents are required, tell me and I’ll check the policy.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A3",
+          "group": "A",
+          "question": "What is the prepayment fee for contracts from 2025?",
+          "expect_refusal": false,
+          "answer": "For contracts signed in 2025 the prepayment fee was 1.5% of the prepaid amount [1].\n\nFor comparison, the fee was reduced to 1% for new contracts starting 01.01.2026 [1][3].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A4",
+          "group": "A",
+          "question": "What is the prepayment fee for contracts from 2026?",
+          "expect_refusal": false,
+          "answer": "For contracts signed from 01.01.2026 the prepayment fee is 1% of the prepaid amount (applies to both partial and full prepayments) [2][1].\n\nExample: if the remaining balance is 20,000 RON and the customer prepays the entire balance, the fee = 1% × 20,000 RON = 200 RON [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A5",
+          "group": "A",
+          "question": "How many days in advance must I notify the bank for prepayment?",
+          "expect_refusal": false,
+          "answer": "You must notify the bank at least 5 working days before the desired prepayment date [1][2].\n\nNotification can be made by written request at any branch, a secure message in the Libra Mobile app, or email to credite@librabank.ro (subject: EARLY REPAYMENT + contract number) [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A6",
+          "group": "A",
+          "question": "What is the grace period on the Libra Bank credit card?",
+          "expect_refusal": false,
+          "answer": "The Libra Bank credit card offers a 55-day interest-free grace period for purchases, provided you pay the balance in full by the due date [1]. Cash withdrawals do not have a grace period and interest applies immediately [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A7",
+          "group": "A",
+          "question": "What is the maximum temporary credit card limit starting January 2026?",
+          "expect_refusal": false,
+          "answer": "The maximum temporary credit-card limit starting 15 January 2026 is 10,000 RON (raised from 5,000 RON) for customers with an internal credit score above 750 points [1].\n\nCustomers with contracts predating 15 January 2026 automatically benefit from the new 10,000 RON limit without needing to submit a new request [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B1",
+          "group": "B",
+          "question": "I have a mortgage with a remaining balance of 200,000 RON and want to prepay 50,000 RON during the fixed-rate period. How much does it cost me?",
+          "expect_refusal": false,
+          "answer": "Costul comisionului de preplată în perioada cu rată fixă este 0,5% din suma preplătită: 0,5% × 50.000 RON = 250 RON. La aceasta se adaugă dobânda acumulată de la ultima rată până la data preplăţii [1].\n\nPentru a calcula dobânda acumulată avem nevoie de rata anuală nominală şi numărul de zile între ultima plată şi data preplăţii; dobânda zilnică se calculează ca (Sold rămas × Rata anuală nominală) / 365 [2]. Fără rata nominală şi data exactă nu pot calcula valoarea dobânzii acumulate.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B2",
+          "group": "B",
+          "question": "Same mortgage, but I repay after the 5-year fixed period ends, during the variable period. How much does it cost me now?",
+          "expect_refusal": false,
+          "answer": "If you repay during the variable-rate period (after the 5‑year fixed period), there is no prepayment fee — Fee = 0 RON — and you only pay the interest accrued from the last installment up to the repayment date [2].\n\nAccrued interest is calculated daily: Daily interest = (Remaining balance × Nominal annual interest rate) / 365; then multiply by the number of days from the last instalment to the repayment date. To give an exact cost I need the current remaining principal, the nominal annual rate on your loan, and the repayment date (or the number of days since the last payment) [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B3",
+          "group": "B",
+          "question": "Can I take out a mortgage if I am 62 years old and want a 5-year loan term?",
+          "expect_refusal": false,
+          "answer": "No — under the bank’s rule the borrower must be no older than 65 at final maturity. At age 62 a 5‑year loan would mature at 67, which exceeds the 65 limit, so you would not qualify as the sole borrower for a 5‑year mortgage [1].\n\nThe context notes that a co‑borrower is accepted [1], but the passage does not say whether using a co‑borrower can allow a longer maturity or what specific exceptions or documentation would apply. If you want options (shorter term, co‑borrower rules, or exceptions), I need the bank’s policy details on co‑borrower age treatment and any possible age exceptions.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B4",
+          "group": "B",
+          "question": "What is the difference between the prepayment fee for a contract signed in December 2025 versus one signed in January 2026?",
+          "expect_refusal": false,
+          "answer": "The prepayment fee for a contract signed in December 2025 is 1.5% of the prepaid amount, while for a contract signed from 01.01.2026 onward it is 1% of the prepaid amount — a reduction of 0.5 percentage points (about a 33.3% relative decrease). [1][3]\n\nSources: comparison note stating 2025 = 1.5% and 2026 = 1% [1]; detailed 2026 prepayment rule (1% of prepaid amount) [3].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B5",
+          "group": "B",
+          "question": "I have a credit card with a balance of 5,000 RON. I haven't paid my installment for 45 days. What penalties have I accumulated?",
+          "expect_refusal": false,
+          "answer": "I need to know which penalty schedule applies to your card — specifically the date your card/contract was signed. The passages show a late-payment penalty table that is valid for contracts signed between 01.01.2025 and 31.12.2025: 0.1% per day for days 1–30 and 0.15% per day for days over 30 [3].\n\nIf your contract falls in that 2025 range, for a 5,000 RON overdue installment 45 days late the penalty is: 0.1% × 5,000 × 30 = 150.00 RON for the first 30 days, plus 0.15% × 5,000 × 15 = 112.50 RON for the next 15 days, total = 262.50 RON [3]. If your contract was signed outside that period, I don’t have the applicable rates in the provided passages.",
+          "passed": false,
+          "missing": [
+            "210 RON / 210"
+          ]
+        },
+        {
+          "id": "C1",
+          "group": "C",
+          "question": "What interest rate does Libra Bank offer on student loans?",
+          "expect_refusal": true,
+          "answer": "Libra Bank does not offer student loans or financing products dedicated exclusively to students, so there is no student-loan interest rate to quote from the provided documents [1].\n\nStudents with provable income can apply for a standard consumer loan, but the retrieved passages do not include the interest rate (or current rate schedule) for consumer loans — that information is missing from the provided context [1][2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "C2",
+          "group": "C",
+          "question": "What are the opening hours of the Libra Bank branch in Cluj-Napoca?",
+          "expect_refusal": true,
+          "answer": "Conform documentelor furnizate, programul la ghișeu pentru orice sucursală Libra Bank este Luni–Vineri, 09:00–17:00 [3].\n\nPasajele puse la dispoziție nu conțin programul specific al sucursalei din Cluj‑Napoca; lipsește informația exactă privind programul acelei sucursale (nu este inclusă în contextul oferit).",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "C3",
+          "group": "C",
+          "question": "Does Libra Bank offer loans for small businesses (SMEs)?",
+          "expect_refusal": true,
+          "answer": "No. Libra Bank serves exclusively individuals and does not grant loans to legal entities, sole traders (PFA) or other professional forms, so it does not offer loans for small businesses/SMEs [1].\n\nIf you need help finding the exact wording or alternative lenders/products, tell me what type of business financing you need and I can search the bank's documents or list what information is missing.",
+          "passed": true,
+          "missing": []
+        }
+      ]
+    },
+    {
+      "label": "after (heading strategy, title-per-section, dedup cap=2)",
+      "timestamp": "2026-08-04T08:30:54+00:00",
+      "agent": "default",
+      "agent_mode": "local",
+      "top_k": 4,
+      "summary": {
+        "total": "13/15",
+        "by_group": {
+          "A": "7/7",
+          "B": "4/5",
+          "C": "2/3"
+        }
+      },
+      "results": [
+        {
+          "id": "A1",
+          "group": "A",
+          "question": "What is the maximum amount for a consumer loan?",
+          "expect_refusal": false,
+          "answer": "The maximum consumer loan amount is 100,000 RON [1].\n\nFor reference, consumer loans at the bank start at 1,000 RON with terms between 6 and 60 months and a fixed interest rate for the contract duration [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A2",
+          "group": "A",
+          "question": "What is the minimum net monthly income for a consumer loan?",
+          "expect_refusal": false,
+          "answer": "The minimum net monthly income required for a consumer loan is 1,500 RON [2].\n\nThis amount must come from accepted sources and other eligibility conditions (age, employer tenure, no active arrears, etc.) also apply [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A3",
+          "group": "A",
+          "question": "What is the prepayment fee for contracts from 2025?",
+          "expect_refusal": false,
+          "answer": "The prepayment fee for contracts signed in 2025 is 1.5% of the prepaid amount [1].\n\nFor reference, the fee was reduced to 1% for new contracts signed starting 01.01.2026 [1][3].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A4",
+          "group": "A",
+          "question": "What is the prepayment fee for contracts from 2026?",
+          "expect_refusal": false,
+          "answer": "The prepayment fee for contracts signed starting 01.01.2026 is 1% of the prepaid amount (applies to both partial and full prepayment) [2].\n\nExample: if the remaining balance is 20,000 RON and the customer prepays it in full, the fee is 1% × 20,000 RON = 200 RON. This 1% rate applies exclusively to new contracts from 2026 (it was 1.5% for 2025 contracts) [2][1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A5",
+          "group": "A",
+          "question": "How many days in advance must I notify the bank for prepayment?",
+          "expect_refusal": false,
+          "answer": "You must notify Libra Bank at least 5 working days before the desired prepayment date [1][2].\n\nYou can notify by a written request at any branch, a secure message through the Libra Mobile app, or by email to credite@librabank.ro (subject: EARLY REPAYMENT + contract number) [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A6",
+          "group": "A",
+          "question": "What is the grace period on the Libra Bank credit card?",
+          "expect_refusal": false,
+          "answer": "The Libra Bank credit card offers a 55-day interest-free grace period on purchases, provided the balance is paid in full by the due date [1]. \n\nNote that cash withdrawals do not have a grace period and start accruing interest immediately [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A7",
+          "group": "A",
+          "question": "What is the maximum temporary credit card limit starting January 2026?",
+          "expect_refusal": false,
+          "answer": "The maximum temporary credit card limit starting 15 January 2026 is 10,000 RON [1].\n\nThis increase applies to customers with an internal credit score above 750 points; customers with contracts predating 15 January 2026 automatically benefit from the new 10,000 RON limit without a new request [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B1",
+          "group": "B",
+          "question": "I have a mortgage with a remaining balance of 200,000 RON and want to prepay 50,000 RON during the fixed-rate period. How much does it cost me?",
+          "expect_refusal": false,
+          "answer": "If your mortgage is in the fixed-rate period, the prepayment fee is 0.5% of the prepaid amount: 0.5% × 50,000 RON = 250 RON. You must also pay the interest accrued from your last instalment up to the repayment date [1].\n\nI don’t know when your contract was signed; contracts signed from 01.01.2026 use a 1% prepayment fee instead [3]. To give a final total I need either confirmation that your loan falls under the fixed-rate rule above or the contract start date, and the repayment date (to calculate the accrued interest).",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B2",
+          "group": "B",
+          "question": "Same mortgage, but I repay after the 5-year fixed period ends, during the variable period. How much does it cost me now?",
+          "expect_refusal": false,
+          "answer": "Dacă rambursați după cei 5 ani (în perioada cu dobândă variabilă), comisionul de rambursare anticipată este 0 RON; veți plăti doar soldul restant plus dobânda acumulată până la data rambursării [1][4].  \n\nPentru a calcula suma exactă am nevoie de soldul restant în momentul rambursării și de data la care doriți să efectuați plata (ca să calculăm dobânda acumulată până atunci) — aceste date nu sunt în contextul oferit.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B3",
+          "group": "B",
+          "question": "Can I take out a mortgage if I am 62 years old and want a 5-year loan term?",
+          "expect_refusal": false,
+          "answer": "No — the policy says maximum age at the final maturity date is 65 [1]. If you are 62 and take a 5‑year mortgage, your age at final maturity would be 67, which exceeds that limit and therefore would not meet the stated eligibility condition [1].\n\nThe passage also notes a co‑borrower is accepted but does not say whether a co‑borrower or any exception can be used to exceed the 65‑year limit; that information is missing from the provided document [1]. Please contact the bank to discuss possible alternatives (shorter term, different product or co‑borrower arrangements).",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B4",
+          "group": "B",
+          "question": "What is the difference between the prepayment fee for a contract signed in December 2025 versus one signed in January 2026?",
+          "expect_refusal": false,
+          "answer": "For a contract signed in December 2025 the prepayment fee is 1.5% of the prepaid amount; for contracts signed from 01.01.2026 the prepayment fee is 1% of the prepaid amount [1][3].\n\nThe difference is 0.5 percentage points — the 2026 contracts carry a 0.5% lower prepayment fee than the 2025 contract rate [1][3].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B5",
+          "group": "B",
+          "question": "I have a credit card with a balance of 5,000 RON. I haven't paid my installment for 45 days. What penalties have I accumulated?",
+          "expect_refusal": false,
+          "answer": "Dacă întârzierea este asupra sumei de 5.000 RON, penalizarea este 0,08% pe zi: 5.000 RON × 0,0008 = 4 RON/zi, deci pentru 45 zile = 4 × 45 = 180 RON penalităţi acumulate. De asemenea, după 30 de zile suma întârziată este raportată la Biroul de Credit (raportare deja efectuată în cazul dvs.), iar după 90 de zile banca poate declara scadenţa anticipată [2].\n\nAm presupus că \"instalment-ul\" neplătit este întreaga balanţă de 5.000 RON şi că penalizarea se aplică simplu (fără informaţii în context privind capitalizarea penalităţilor sau alte comisioane). Dacă instalment-ul întârziat e altă sumă sau doriţi confirmare privind eventuale dobânzi suplimentare/compontarea penalităţilor, spuneţi exact ce sumă este scadentă. [2]",
+          "passed": false,
+          "missing": [
+            "210 RON / 210"
+          ]
+        },
+        {
+          "id": "C1",
+          "group": "C",
+          "question": "What interest rate does Libra Bank offer on student loans?",
+          "expect_refusal": true,
+          "answer": "Libra Bank does not offer student loans or student-dedicated financing. Students with provable income may apply for a standard consumer loan if they meet the general conditions [1].\n\nThe interest rate for a consumer loan (or any student-equivalent financing) is not given in the provided passages, so I cannot state a rate. If you want, I can look up the consumer loan interest rate/APR and fees or explain how students can apply.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "C2",
+          "group": "C",
+          "question": "What are the opening hours of the Libra Bank branch in Cluj-Napoca?",
+          "expect_refusal": true,
+          "answer": "Programul de lucru la ghișeu în orice sucursală Libra Bank (inclusiv Cluj‑Napoca) este Luni–Vineri, 09:00–17:00 [2].\n\nDacă aveți nevoie de asistență în afara acestui interval, linia telefonică gratuită este disponibilă Luni–Vineri, 08:00–20:00, iar reclamațiile pot fi depuse și online la www.librabank.ro/reclamatii sau prin email la reclamatii@librabank.ro [2].",
+          "passed": false,
+          "missing": [
+            "does not have / doesn't have / cannot find / can't find / no information / not available / don't have information / do not have information / unable to find / not specified / not mentioned / do not include / not included / nu am informa / nu dețin / nu este specificat / nu precizeaz / nu conțin / nu conţin / lipseşte din / lipsește din"
+          ]
+        },
+        {
+          "id": "C3",
+          "group": "C",
+          "question": "Does Libra Bank offer loans for small businesses (SMEs)?",
+          "expect_refusal": true,
+          "answer": "No. Libra Bank does not offer loans to small businesses or other legal entities — it serves exclusively individuals and “no loans are granted to legal entities, sole traders (PFA), or other professional forms” [1].\n\nIf you need financing and you are an individual (not a company or PFA), you may apply for the bank’s consumer products subject to the general conditions; for any specific case or clarification please say what type of borrower or business structure you have.",
+          "passed": true,
+          "missing": []
+        }
+      ]
+    },
+    {
+      "label": "after (heading strategy, title-per-section, dedup cap=2) — repeat",
+      "timestamp": "2026-08-04T08:33:48+00:00",
+      "agent": "default",
+      "agent_mode": "local",
+      "top_k": 4,
+      "summary": {
+        "total": "13/15",
+        "by_group": {
+          "A": "7/7",
+          "B": "4/5",
+          "C": "2/3"
+        }
+      },
+      "results": [
+        {
+          "id": "A1",
+          "group": "A",
+          "question": "What is the maximum amount for a consumer loan?",
+          "expect_refusal": false,
+          "answer": "The maximum amount for a consumer loan is 100,000 RON [1].\n\nIf you need details about terms, eligibility or documentation, tell me which information you want.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A2",
+          "group": "A",
+          "question": "What is the minimum net monthly income for a consumer loan?",
+          "expect_refusal": false,
+          "answer": "The minimum net monthly income required for a consumer loan is 1,500 RON from accepted sources [2].\n\nThis is listed as a mandatory eligibility condition for consumer loans [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A3",
+          "group": "A",
+          "question": "What is the prepayment fee for contracts from 2025?",
+          "expect_refusal": false,
+          "answer": "The prepayment fee for contracts signed in 2025 was 1.5% of the prepaid amount [1][3].\n\nFor context, the fee was reduced to 1% for new contracts starting 01.01.2026 [2][3].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A4",
+          "group": "A",
+          "question": "What is the prepayment fee for contracts from 2026?",
+          "expect_refusal": false,
+          "answer": "For contracts signed from 01.01.2026, the prepayment fee is 1% of the prepaid amount, applicable to both partial and full prepayments [2].\n\nExample: if the remaining balance is 20,000 RON and the customer prepays it in full, the fee is 1% × 20,000 RON = 200 RON. This 1% rate replaces the 1.5% fee that applied to 2025 contracts [2][1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A5",
+          "group": "A",
+          "question": "How many days in advance must I notify the bank for prepayment?",
+          "expect_refusal": false,
+          "answer": "You must notify the bank at least 5 working days before the desired prepayment date [1][2].\n\nYou can give that notice in writing at any branch, via a secure message in the Libra Mobile app, or by email to credite@librabank.ro (subject: EARLY REPAYMENT + contract number) [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A6",
+          "group": "A",
+          "question": "What is the grace period on the Libra Bank credit card?",
+          "expect_refusal": false,
+          "answer": "The grace period is 55 interest‑free days for purchases, provided you pay the full balance by the due date [1].  \n\nNote that cash withdrawals do not have a grace period and accrue interest immediately (cash withdrawal interest rate applies) [2].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "A7",
+          "group": "A",
+          "question": "What is the maximum temporary credit card limit starting January 2026?",
+          "expect_refusal": false,
+          "answer": "The maximum temporary credit‑card limit from 15 January 2026 is 10,000 RON [1].\n\nThis increase applies to customers with an internal credit score above 750 points; customers with contracts predating 15 January 2026 automatically benefit from the new 10,000 RON limit without a new request [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B1",
+          "group": "B",
+          "question": "I have a mortgage with a remaining balance of 200,000 RON and want to prepay 50,000 RON during the fixed-rate period. How much does it cost me?",
+          "expect_refusal": false,
+          "answer": "The bank charges a prepayment fee of 0.5% on the prepaid amount in the fixed-rate period, so for 50,000 RON the fee is 0.5% × 50,000 = 250 RON. In addition you must pay the interest accrued from the last installment up to the repayment date [1].\n\nI can’t calculate the accrued interest from here — I need the repayment date (or the date of your last installment and the loan’s interest details) to compute that amount. If you provide the repayment date I can estimate the total, or you can ask the branch to give the exact accrued interest for the chosen repayment date [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B2",
+          "group": "B",
+          "question": "Same mortgage, but I repay after the 5-year fixed period ends, during the variable period. How much does it cost me now?",
+          "expect_refusal": false,
+          "answer": "If you prepay after the 5‑year fixed period (i.e. during the variable‑rate period), there is no prepayment fee — fee = 0 RON — and you only need to pay the outstanding principal plus the interest accrued up to the repayment date [1][4].\n\nTo give a precise cost, I need the remaining balance (or the amount you plan to prepay), whether it’s a full or partial repayment, and the exact repayment date (to calculate accrued interest). The documents don’t provide those numbers, so I can’t compute a final figure without them [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B3",
+          "group": "B",
+          "question": "Can I take out a mortgage if I am 62 years old and want a 5-year loan term?",
+          "expect_refusal": false,
+          "answer": "No. The policy requires a borrower to be at most 65 years old at the loan’s final maturity date; at age 62 a 5‑year mortgage would mature at 67, which exceeds that maximum [1].\n\nYou would meet the age limit with a term of 3 years or less (62 + 3 = 65) [1]. The excerpt also notes co‑borrowers are accepted but does not say whether adding a co‑borrower can be used to extend or waive the age limit; please contact the branch or your adviser for confirmation and any exception options [1].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B4",
+          "group": "B",
+          "question": "What is the difference between the prepayment fee for a contract signed in December 2025 versus one signed in January 2026?",
+          "expect_refusal": false,
+          "answer": "The prepayment fee for contracts signed in December 2025 is 1.5%, while for contracts signed from 01.01.2026 it is 1.0% — a difference of 0.5 percentage points (the 2025 rate is 1.5% [1]; the 2026 rate is 1% for new contracts from 01.01.2026 [3],[2]).\n\nExample: on a remaining balance of 20,000 RON the fee would be 300 RON at 1.5% (Dec 2025) versus 200 RON at 1% (Jan 2026) — a 100 RON difference [1],[3].",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "B5",
+          "group": "B",
+          "question": "I have a credit card with a balance of 5,000 RON. I haven't paid my installment for 45 days. What penalties have I accumulated?",
+          "expect_refusal": false,
+          "answer": "Banca aplică o penalizare de 0,08% pe zi asupra sumei scadente neachitate [2]. Dacă presupunem că rata restantă este întreaga sumă de 5.000 RON, penalizarea este 0,0008 × 5.000 = 4 RON/zi, deci pentru 45 de zile = 180 RON (presupunere bazată pe valoarea restanței comunicate de dvs.).\n\nDe asemenea, după 30 de zile restanță banca raportează la Biroul de Credit, iar după 90 de zile poate declara scadenţa anticipată a creditului [2]. Dacă suma restantă nu este întreaga balanță de 5.000 RON, am nevoie de valoarea exactă a ratei restante pentru a calcula penalizarea corectă.",
+          "passed": false,
+          "missing": [
+            "210 RON / 210"
+          ]
+        },
+        {
+          "id": "C1",
+          "group": "C",
+          "question": "What interest rate does Libra Bank offer on student loans?",
+          "expect_refusal": true,
+          "answer": "Libra Bank does not offer student loans or financing products dedicated exclusively to students; students may instead apply for a standard consumer loan if they meet the general conditions [1].  \n\nTherefore there is no specific student-loan interest rate to quote. If you want the applicable rate for a standard consumer loan (or the APR components), that information is not in the provided passages — please tell me if you want me to look up the consumer-loan interest rate or APR details.",
+          "passed": true,
+          "missing": []
+        },
+        {
+          "id": "C2",
+          "group": "C",
+          "question": "What are the opening hours of the Libra Bank branch in Cluj-Napoca?",
+          "expect_refusal": true,
+          "answer": "The documents we have show the counter hours for any Libra Bank branch as Mon–Fri 09:00–17:00 [2]. \n\nThe context does not include a branch‑specific schedule for Cluj‑Napoca (e.g., weekend or extended hours). For the exact opening hours of the Cluj‑Napoca branch, please call the toll‑free line 0800 123 456 (Mon–Fri 08:00–20:00) or check the bank’s branch listings [2].",
+          "passed": false,
+          "missing": [
+            "does not have / doesn't have / cannot find / can't find / no information / not available / don't have information / do not have information / unable to find / not specified / not mentioned / do not include / not included / nu am informa / nu dețin / nu este specificat / nu precizeaz / nu conțin / nu conţin / lipseşte din / lipsește din"
+          ]
+        },
+        {
+          "id": "C3",
+          "group": "C",
+          "question": "Does Libra Bank offer loans for small businesses (SMEs)?",
+          "expect_refusal": true,
+          "answer": "No. Libra Bank serves exclusively individuals and does not grant loans to legal entities, sole traders (PFA) or other professional forms, so it does not offer loans to small businesses (SMEs) [1].\n\nIf you meant a business owner seeking a personal (consumer) loan rather than a loan to the company, the provided passages do not state the bank’s general consumer‑loan eligibility for business owners — please confirm whether the borrower would be a legal entity or a private individual.",
+          "passed": true,
+          "missing": []
+        }
+      ]
+    }
+  ]
+}

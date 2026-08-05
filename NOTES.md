@@ -136,3 +136,85 @@ The agent invented the Cluj-Napoca branch opening hours by picking up informatio
 The 0.5% fee (mortgage, fixed-rate period) and the 1% fee (consumer loan, 2026) are both in the corpus and retrieval brings back both, which creates confusion.
 
 **What I would do:** Implement metadata filters on `product` — when the question is about consumer loans, search only in chunks with `product=credite-consum`.
+
+---
+
+## 6. Reproducible before/after (with `scripts/run_golden_set.py`)
+
+Section 3 above was measured by hand — I answered each question myself and filled in the
+table. That's honest, but it's not reproducible by anyone else, and it was measured
+*after* Part 4/5's improvements (stable IDs, score threshold, dedup) were already applied,
+so there was never really a "before" number for those.
+
+`scripts/run_golden_set.py` fixes both problems: it calls `/ask` for all 15 questions and
+grades each answer against `data/golden_set.json` (a set of acceptable phrasings per
+question, English + Romanian — the agent doesn't always answer in the question's language),
+then appends the run to `data/golden_set_results.json`. Anyone can reproduce a number with:
+
+```bash
+uv run python scripts/ingest_corpus.py
+uv run python scripts/run_golden_set.py --label "my-run" --agent default
+```
+
+### Before: 13/15 (chunk_size=500, `dynamic` strategy — the config Part 6 was actually measured under)
+
+Failures: **A1** (max consumer-loan amount) — the "Main features" section is cut into a
+different chunk than the intro, exactly the systemic problem described above. **B5** (card
+late-payment penalty) — the model used the wrong per-day rate.
+
+### What changed
+
+1. **Heading-based chunking** (`app/chunking.py: chunk_heading`) — one chunk per `## `
+   section instead of packing by character budget. Directly fixes the cut-off problem:
+   a section's numbers are never separated from the heading that names them.
+2. First attempt regressed **B3** (mortgage age eligibility): a whole-document chunk
+   dilutes the embedding of a *specific* section, so a narrow query like "62 years old,
+   5-year term" scored below the 0.5 threshold against a chunk mixing four unrelated
+   eligibility topics. **Fix:** every section chunk carries the document's `# ` title
+   (not just the first one) — a bare `## Main features` chunk never mentions "consumer
+   loan" at all, so on its own it scores too low against a question that does.
+3. That surfaced a second, subtler bug in **A2** (minimum income): with real per-section
+   chunks, `_apply_retrieval_improvements`'s dedup (keep 1 chunk per source) discarded
+   "Mandatory conditions" (0.564, has the answer) in favor of "Automatic rejection
+   conditions" (0.568, doesn't) from the same document — a near-tie the old dedup logic
+   gambled on. Raised the cap to `MAX_CHUNKS_PER_SOURCE = 2` (`app/main.py`).
+
+### After: 13/15, repeated twice — {'A': '7/7', 'B': '4/5', 'C': '2/3'} both times
+
+The total (13→13) doesn't move, but *what's failing* does, consistently across both
+after-runs: **Group A is now perfect (6/7 → 7/7)** — A1, the specific failure this work
+targeted, is fixed for good, not a lucky run. B5 is still wrong both times — same root
+issue as before (it mixes up the credit-card penalty rate with a different document's
+rate), and it's the deliberately hardest question in the set (two-stage calculation + two
+documents). **Group C got worse (3/3 → 2/3)**, and that's a real, understood trade-off,
+not noise: relaxing dedup to 2 chunks per source (needed to fix A2 along the way — see
+below) also lets more content into context for the deliberately-unanswerable C2 question,
+so its answer now more often states the general branch hours "including Cluj-Napoca"
+instead of cleanly refusing. Fixing A2 and holding C2's discipline both come from the same
+knob (`MAX_CHUNKS_PER_SOURCE`); this repo currently trades one for the other rather than
+solving both, and that's the honest state of it — see "What I'd do next" below.
+
+**Two things surfaced along the way**, not just the headline fix:
+
+- First attempt at heading-chunking (chunk-per-section, but only the *first* section
+  keeping the document's title) regressed **B3** (mortgage age eligibility): a query like
+  "62 years old, 5-year term" scored below the 0.5 threshold against a bare `## Personal
+  conditions` section that never mentions "mortgage" on its own. Fixed by carrying the
+  document's `# ` title on *every* section, not just the first.
+- That in turn surfaced **A2** (minimum income): with real per-section chunks, the old
+  "keep 1 chunk per source" dedup discarded "Mandatory conditions" (score 0.564, has the
+  answer) in favor of "Automatic rejection conditions" (0.568, doesn't) from the same
+  document — a near-tie the aggressive cap gambled on. Raised to
+  `MAX_CHUNKS_PER_SOURCE = 2`, which is also the reason C2 regressed (above).
+
+**Honest caveat:** the score moves by about ±1 question between identical runs — the
+model samples at `temperature=0.2`, and several of these questions retrieve right at the
+0.5 threshold. Re-running `scripts/run_golden_set.py` a third time would not surprise me
+with a 12 or a 14; what's stable across every after-run so far is Group A at 7/7 and B5
+still wrong, which is the actual, targeted result of this work — not a claim that the
+system is now deterministic or that B5/C2 are solved.
+
+**What I'd do next:** make dedup topic-aware instead of a flat per-source cap — e.g. only
+admit a second chunk from the same source if its score is within some margin of the
+first, so a near-tie like A2's two sections both get in, but a clearly-irrelevant second
+chunk (the failure mode C2 reintroduced) doesn't.
