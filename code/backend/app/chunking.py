@@ -1,6 +1,6 @@
 """Chunking strategies — the first decision of every RAG pipeline, made visible.
 
-Four strategies, deliberately spanning the sophistication spectrum:
+Five strategies, deliberately spanning the sophistication spectrum:
 
   static    fixed character windows; cheap, ignores meaning (splits mid-sentence)
   sentence  groups of N sentences; trivially readable boundaries
@@ -8,6 +8,11 @@ Four strategies, deliberately spanning the sophistication spectrum:
             budget with overlap; never cuts inside a sentence unless forced
   semantic  sentence embeddings; a new chunk starts where adjacent cosine
             similarity drops below a threshold — meaning-aware, costs embeddings
+  heading   Markdown-aware: each "## " section becomes its own chunk — a
+            section's numbers are never separated from the heading that
+            explains them, and (unlike one giant whole-document chunk) each
+            chunk stays topically narrow, so its embedding isn't diluted by
+            unrelated sections and still scores well against a specific query
 """
 from __future__ import annotations
 
@@ -17,6 +22,7 @@ from typing import Callable
 
 SENTENCE_END = re.compile(r"(?<=[.!?…])\s+")
 PARAGRAPH_SPLIT = re.compile(r"\n\s*\n")
+HEADING_SPLIT = re.compile(r"(?m)^##\s+.*$")
 
 EmbedFn = Callable[[list[str]], list[list[float]]]
 
@@ -94,6 +100,45 @@ def chunk_dynamic(text: str, size: int, overlap: int) -> list[str]:
     return [c for i, c in enumerate(chunks) if not (i > 0 and c and c in chunks[i - 1])]
 
 
+TITLE_LINE = re.compile(r"(?m)^#\s+.*$")
+
+
+def chunk_heading(text: str, size: int, overlap: int) -> list[str]:
+    """One chunk per "## " section, each carrying the document's "# " title.
+
+    A title/intro with no "##" headings at all falls back to `chunk_dynamic`.
+    A section longer than `size` is packed further with `chunk_dynamic` rather
+    than left as one oversized chunk.
+
+    The title is repeated on *every* section, not just the first: a section
+    like "## Main features / - Maximum amount: 100,000 RON" never mentions
+    "consumer loan" on its own, so without the title its embedding scores too
+    low against "what is the maximum consumer loan amount" to clear the
+    retrieval threshold — a real failure mode this fixes, not a hypothetical.
+    """
+    matches = list(HEADING_SPLIT.finditer(text))
+    if not matches:
+        return chunk_dynamic(text, size, overlap)
+
+    title_match = TITLE_LINE.search(text[: matches[0].start()])
+    title = title_match.group().strip() if title_match else ""
+    preamble = text[: matches[0].start()].strip()
+
+    chunks: list[str] = []
+    for i, m in enumerate(matches):
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        section = text[m.start() : end].strip()
+        if i == 0 and preamble:
+            section = f"{preamble}\n\n{section}"
+        elif title:
+            section = f"{title}\n\n{section}"
+        if len(section) > size:
+            chunks.extend(chunk_dynamic(section, size, overlap))
+        else:
+            chunks.append(section)
+    return chunks
+
+
 def chunk_semantic(text: str, threshold: float, embed_fn: EmbedFn) -> list[str]:
     """Embed every sentence; start a new chunk where the cosine similarity
     between neighbouring sentences falls below `threshold`."""
@@ -112,7 +157,7 @@ def chunk_semantic(text: str, threshold: float, embed_fn: EmbedFn) -> list[str]:
 
 # --- dispatcher ---------------------------------------------------------------
 
-STRATEGIES = ("static", "dynamic", "sentence", "semantic")
+STRATEGIES = ("static", "dynamic", "sentence", "semantic", "heading")
 
 
 def chunk(
@@ -138,4 +183,6 @@ def chunk(
         if embed_fn is None:
             raise ValueError("semantic chunking requires an embedding function")
         return chunk_semantic(text, threshold, embed_fn)
+    if strategy == "heading":
+        return chunk_heading(text, size, overlap)
     raise ValueError(f"unknown strategy '{strategy}' — expected one of {STRATEGIES}")

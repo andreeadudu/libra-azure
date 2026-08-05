@@ -5,6 +5,7 @@ din headerul YAML al fiecarui document si o trimite la ingestie.
 Rulare: uv run python code/backend/scripts/ingest_corpus.py
 """
 
+import argparse
 import os
 import requests
 
@@ -30,7 +31,8 @@ def parse_yaml_header(text: str) -> tuple[dict, str]:
     return metadata, content
 
 
-def ingest_file(filepath: str, source: str) -> bool:
+def ingest_file(filepath: str, source: str,
+                 chunk_size: int = 2000, strategy: str = "heading") -> bool:
     with open(filepath, "r", encoding="utf-8") as f:
         raw = f.read()
 
@@ -38,8 +40,12 @@ def ingest_file(filepath: str, source: str) -> bool:
 
     payload = {
         "text": content,       # body only — the YAML header is metadata, not retrievable text
-        "strategy": "dynamic",
-        "chunk_size": 2000,    # every corpus doc body is under ~1700 chars — keep each one whole
+        # heading (default): one chunk per "## " section — never cuts a section's
+        # numbers off, and (unlike one whole-doc chunk) stays topically narrow so
+        # its embedding isn't diluted — see app/chunking.py's chunk_heading().
+        # --strategy dynamic --chunk-size 500 reproduces the pre-fix baseline.
+        "strategy": strategy,
+        "chunk_size": chunk_size,  # safety cap for a section that runs unusually long
         "source": source,
         "metadata": {
             "title": metadata.get("title", source),
@@ -65,10 +71,19 @@ def ingest_file(filepath: str, source: str) -> bool:
 
 
 def main():
-    data_dir = os.path.abspath(DATA_DIR)
-    print(f"Corpus folder: {data_dir}\n")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--chunk-size", type=int, default=2000,
+                         help="override chunk_size sent to /ingest (default 2000 — a safety "
+                              "cap, most sections are far smaller). Use 500 with "
+                              "--strategy dynamic to reproduce the pre-fix baseline in NOTES.md.")
+    parser.add_argument("--strategy", default="heading",
+                         help="chunking strategy (default: heading — see app/chunking.py)")
+    args = parser.parse_args()
 
-    excluded = {"README.md", "questions.md"}  # docs about the corpus, not part of it
+    data_dir = os.path.abspath(DATA_DIR)
+    print(f"Corpus folder: {data_dir}  (strategy={args.strategy}, chunk_size={args.chunk_size})\n")
+
+    excluded = {"README.md", "questions.md", "golden_set.json", "golden_set_results.json"}
     files = sorted([
         f for f in os.listdir(data_dir)
         if f.endswith(".md") and f not in excluded
@@ -82,7 +97,7 @@ def main():
     for filename in files:
         filepath = os.path.join(data_dir, filename)
         source = filename.replace(".md", "")
-        success = ingest_file(filepath, source)
+        success = ingest_file(filepath, source, chunk_size=args.chunk_size, strategy=args.strategy)
         if success:
             ok += 1
         else:
