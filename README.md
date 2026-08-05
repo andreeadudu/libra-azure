@@ -8,6 +8,15 @@ The module is one continuous build: students extend the agent they already built
 with George (given a banking persona) into a production-grade, Azure-native
 solution — grounded, measured, observable, cost-bounded, able to act.
 
+## This is my final project submission
+
+This fork is the course repository taken over for the final project — see
+`code/backend/README.md § This submission — my own additions` for what's mine: a
+deployed Foundry persona, an invented corpus with a golden question set and a
+reproducible evaluation script, guardrails, and interface work (text-to-speech,
+microphone dictation, conversation history). The before/after evaluation numbers
+and what changed in between are in `NOTES.md`.
+
 ## Repository layout
 
 ```

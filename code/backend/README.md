@@ -304,6 +304,26 @@ uv run python scripts/invoke_agent.py "What fee applies to early repayment?" --p
 API keys are **not accepted** by the Agent Service — it is Entra-only. Set
 `AZURE_AI_AUTH=identity` and `az login` for that lane.
 
+## This submission — my own additions
+
+This is the course repository, taken over: same backend, same endpoints — the persona,
+corpus, evaluation and interface work below are mine.
+
+- **Persona:** `app/agents/personas/dudu_credit-specialist.json` — "Credit Product
+  Specialist", a comparison-first agent that lays consumer loan / mortgage / credit card
+  side by side before recommending one. Deployed to Foundry (`uv run python
+  scripts/deploy_agent.py dudu_credit-specialist`); runnable with
+  `{"agent": "dudu_credit-specialist", "agent_mode": "foundry"}`.
+- **Corpus + golden set:** `../../data/` — 15 invented documents on one fictional bank's
+  consumer/mortgage/card products, plus a 15-question golden set with a reproducible
+  scoring script. See `../../data/README.md` for how to run it and `NOTES.md` (this
+  folder) for the before/after numbers and what changed in between.
+- **Guardrails:** `app/model_gr.py` (approved-model allowlist), `app/input_gr.py`
+  (sensitive-topic input screen) and `app/output_gr.py` (citation/consistency/toxicity
+  checks on the model's own output) — wired into `app/llm.py`'s `chat()`.
+- **Interface:** text-to-speech per answer, microphone dictation, and conversation
+  history in `code/frontend/src/views/Chat.jsx` — see that folder's own notes below.
+
 ## Tools (specialist services)
 
 ```bash
