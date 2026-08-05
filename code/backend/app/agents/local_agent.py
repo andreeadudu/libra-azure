@@ -50,6 +50,7 @@ def run(
     question: str,
     chunks: list[dict] | None = None,
     temperature: float | None = None,
+    history: list[dict] | None = None,
 ) -> AgentReply:
     chunks = chunks or []
     system = persona.system_prompt(grounded=bool(chunks))
@@ -68,7 +69,8 @@ def run(
 
     llm = get_llm()
     result = llm.chat(system=system, user=user, temperature=temp,
-                      max_tokens=max_tokens, extras=extras)
+                      max_tokens=max_tokens, extras=extras, history=history,
+                      num_sources=len(chunks))
 
     return AgentReply(
         text=result.text,

@@ -5,9 +5,10 @@ ChatResult always carries the token usage when the provider reports it.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import lru_cache
 
+from . import input_gr, model_gr, output_gr
 from .config import settings
 
 
@@ -18,6 +19,9 @@ class ChatResult:
     model: str
     prompt_tokens: int | None = None
     completion_tokens: int | None = None
+    # Non-fatal output-guardrail findings (citation mismatches, possible
+    # self-contradiction, ...). Empty unless check_output() flagged something.
+    warnings: list[str] = field(default_factory=list)
 
 
 class LLM:
@@ -27,14 +31,58 @@ class LLM:
         self._client = client
 
     def chat(self, system: str, user: str, temperature: float, max_tokens: int,
-             extras: dict | None = None) -> ChatResult:
+             extras: dict | None = None, history: list[dict] | None = None,
+             num_sources: int = 0) -> ChatResult:
+        """Provider-agnostic chat, wrapped by three guardrails:
+
+          1. model_gr  — the provider/model pair must be on the approved list,
+                          checked once up front so an unapproved model never
+                          gets a chance to run.
+          2. input_gr  — the user turn is screened for sensitive topics before
+                          it is sent anywhere; a hit short-circuits the call
+                          entirely (no tokens spent) and returns a friendly
+                          refusal in place of a real response.
+          3. output_gr — the model's own reply is checked before it's handed
+                          back to the caller: toxicity hard-blocks and swaps
+                          in a friendly message, citation/consistency issues
+                          are attached as `ChatResult.warnings` instead of
+                          blocking (a false positive there would eat a
+                          correct answer).
+
+        `num_sources` is how many retrieved chunks were available — pass it
+        through from a RAG caller (e.g. len(chunks) in local_agent.run) so the
+        output guardrail's citation check has something to validate against.
+        """
+        model_gr.ensure_approved(self.provider, self.model)
+
+        input_check = input_gr.check_input(user)
+        if input_check.blocked:
+            return ChatResult(text=input_check.message, provider=self.provider, model=self.model)
+
+        result = self._dispatch(system, user, temperature, max_tokens, extras, history)
+
+        output_check = output_gr.check_output(result.text, num_sources=num_sources)
+        if not output_check.allowed:
+            result.text = output_check.message
+        else:
+            result.warnings = output_check.warnings
+        return result
+
+    def _dispatch(self, system: str, user: str, temperature: float, max_tokens: int,
+                  extras: dict | None, history: list[dict] | None) -> ChatResult:
+        # Prior turns go in as their own real messages, each with its own role — never
+        # flattened into "User: ...\nAssistant: ..." text. That shape mimics impersonated
+        # conversation turns, which Azure's jailbreak filter treats as a prompt-injection
+        # signature and rejects outright.
         extras = extras or {}
+        history = history or []
         if self.provider in ("lmstudio", "openai"):
             kwargs: dict = {
                 "model": self.model,
                 "temperature": temperature,
                 "messages": [
                     {"role": "system", "content": system},
+                    *history,
                     {"role": "user", "content": user},
                 ],
             }
@@ -60,7 +108,7 @@ class LLM:
                 system=system,
                 max_tokens=max_tokens,
                 temperature=temperature,
-                messages=[{"role": "user", "content": user}],
+                messages=[*history, {"role": "user", "content": user}],
             )
             return ChatResult(
                 text="".join(block.text for block in r.content if block.type == "text"),
@@ -73,6 +121,7 @@ class LLM:
         # azure — azure-ai-inference ChatCompletionsClient
         messages = [
             {"role": "system", "content": system},
+            *history,
             {"role": "user", "content": user},
         ]
         try:
