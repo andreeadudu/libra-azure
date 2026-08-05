@@ -86,12 +86,19 @@ export default function Chat({ conversation, onMessagesChange, agents, hostedOnl
   async function send() {
     const text = question.trim()
     if (!text || busy) return
+    // The server keeps no session state, so each call resends the full transcript so
+    // far — built from what's on screen before this new question is appended.
+    const history = messages
+      .filter((m) => m.role === 'user' || m.role === 'bot')
+      .map((m) => m.role === 'user'
+        ? { role: 'user', content: m.text }
+        : { role: 'assistant', content: m.data.answer })
     setQuestion(''); setError(null); setBusy(true)
     if (taRef.current) taRef.current.style.height = 'auto'
     setMessages((m) => [...m, { role: 'user', text }])
     try {
       const data = await api.ask({ question: text, use_rag: useRag, top_k: Number(topK),
-                                  agent, agent_mode: mode, fact_check: factCheck })
+                                  agent, agent_mode: mode, fact_check: factCheck, history })
       setMessages((m) => [...m, { role: 'bot', data }])
     } catch (e) {
       setMessages((m) => [...m, { role: 'err', text: e.message }])

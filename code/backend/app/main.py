@@ -108,25 +108,35 @@ def _require_qdrant() -> None:
         )
 
 
+MAX_CHUNKS_PER_SOURCE = 2
+
+
 def _apply_retrieval_improvements(hits: list[dict]) -> list[dict]:
     """
     Improvement 1: Score threshold — drop hits below SCORE_THRESHOLD.
     Weak hits lead to confident wrong answers; better to say 'nothing relevant found'.
 
-    Improvement 2: Deduplication — keep only the best chunk per source document.
-    Returning 3 chunks from the same document wastes context and hides other facts.
+    Improvement 2: Deduplication — cap chunks per source document at
+    MAX_CHUNKS_PER_SOURCE. With small fixed-size chunks a document's top hits
+    are near-duplicates of each other, so capping at 1 loses nothing. With
+    heading-based chunking each "## section" is a genuinely distinct topic —
+    e.g. a document's "Mandatory conditions" and "Automatic rejection
+    conditions" sections can score within 0.01 of each other for the same
+    query, and only one of them holds the actual answer. Capping at 1 there
+    is a coin flip on which section survives; 2 keeps that from silently
+    discarding the right one while still bounding context size.
     """
     # Improvement 1: score threshold
     hits = [h for h in hits if h["score"] >= SCORE_THRESHOLD]
 
-    # Improvement 2: deduplication — max 1 chunk per source
-    seen_sources: set[str] = set()
+    # Improvement 2: deduplication — max MAX_CHUNKS_PER_SOURCE per source
+    counts: dict[str, int] = {}
     deduped = []
     for h in hits:
         src = h.get("source", "")
-        if src not in seen_sources:
+        if counts.get(src, 0) < MAX_CHUNKS_PER_SOURCE:
             deduped.append(h)
-            seen_sources.add(src)
+            counts[src] = counts.get(src, 0) + 1
 
     return deduped
 
@@ -369,14 +379,16 @@ def ask(req: AskRequest) -> AskResponse:
 
     chunks = [h.model_dump() for h in retrieved]
     mode = mode_requested
+    history = [t.model_dump() for t in req.history]
 
     try:
         if hosted_only is not None:
-            reply = foundry_agent.run_hosted(hosted_only, req.question, chunks)
+            reply = foundry_agent.run_hosted(hosted_only, req.question, chunks, history=history)
         elif mode == "foundry":
-            reply = foundry_agent.run(persona, req.question, chunks)
+            reply = foundry_agent.run(persona, req.question, chunks, history=history)
         else:
-            reply = local_agent.run(persona, req.question, chunks, temperature=req.temperature)
+            reply = local_agent.run(persona, req.question, chunks,
+                                    temperature=req.temperature, history=history)
     except foundry_agent.FoundryUnavailable as e:
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:

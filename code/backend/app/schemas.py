@@ -5,7 +5,7 @@ from typing import Literal, Optional  # noqa: F401  (Literal used by AskRequest)
 
 from pydantic import BaseModel, Field
 
-Strategy = Literal["static", "dynamic", "sentence", "semantic"]
+Strategy = Literal["static", "dynamic", "sentence", "semantic", "heading"]
 
 
 # --- chunking -----------------------------------------------------------------
@@ -93,6 +93,11 @@ class SearchResponse(BaseModel):
 
 
 # --- generation ---------------------------------------------------------------
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+
+
 class AskRequest(BaseModel):
     model_config = {"json_schema_extra": {"examples": [{
         "question": "What fee does Libra Bank charge for early mortgage repayment?",
@@ -103,6 +108,12 @@ class AskRequest(BaseModel):
 
     question: str = Field(..., min_length=1)
     use_rag: bool = Field(True, description="false = plain LLM; true = retrieve then augment")
+    history: list[ChatTurn] = Field(
+        default_factory=list,
+        description="Prior turns of this conversation, oldest first — the client resends the "
+                    "full transcript on every call since the server keeps no session state. "
+                    "Folded into the prompt ahead of the current question.",
+    )
     top_k: Optional[int] = Field(None, ge=1, le=50)
     temperature: Optional[float] = Field(None, ge=0, le=2)
     agent: Optional[str] = Field(
